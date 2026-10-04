@@ -1,14 +1,12 @@
 import { EmptyState } from '@/components/page';
-import { Progress } from '@/components/ui/progress';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatBytes, formatFigure, formatPercent, formatRate } from '@/core/format';
 import type { Host } from '@/hosts/use-live-hosts';
+import { UsageBar } from '@/readings/usage-bar';
 
 type Reading = NonNullable<Host['reading']>;
 
 const NUMERIC = 'text-right tabular-nums';
-/** From this share up, a filesystem's bar is drawn as nearly full. */
-const NEARLY_FULL_PERCENT = 90;
 
 /**
  * Mounted filesystems with how full each is.
@@ -37,12 +35,10 @@ export function FilesystemTable({ filesystems }: { filesystems: Reading['filesys
             <TableHead>{filesystem.mountPoint}</TableHead>
             <TableCell className="text-muted-foreground">{filesystem.deviceName ?? '—'}</TableCell>
             <TableCell>
-              <Progress
-                value={filesystem.percent}
+              <UsageBar
+                percent={filesystem.percent}
                 label={`${filesystem.mountPoint} used`}
                 valueLabel={formatPercent(filesystem.percent)}
-                className="h-1.5"
-                indicatorClassName={filesystem.percent >= NEARLY_FULL_PERCENT ? 'bg-destructive' : undefined}
               />
             </TableCell>
             <TableCell className={NUMERIC}>
@@ -147,7 +143,7 @@ function ShareBar({ percent, label }: { percent: number | null; label: string })
   }
   return (
     <div className="flex items-center gap-3">
-      <Progress value={percent} label={label} valueLabel={formatPercent(percent)} className="h-1.5 min-w-16 flex-1" />
+      <UsageBar percent={percent} label={label} valueLabel={formatPercent(percent)} className="min-w-16 flex-1" />
       <span className="w-14 text-right tabular-nums">{formatPercent(percent)}</span>
     </div>
   );

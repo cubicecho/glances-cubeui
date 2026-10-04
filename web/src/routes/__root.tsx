@@ -25,7 +25,7 @@ function Brand() {
   return (
     <div className="flex items-center gap-2 px-2 py-1 font-semibold text-sm">
       <Activity className="size-4" aria-hidden />
-      Glances
+      CubeUI Glances
     </div>
   );
 }

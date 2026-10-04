@@ -1,6 +1,6 @@
 # glances-cubeui
 
-A dashboard for one or more [Glances](https://github.com/nicolargo/glances) servers (`glances -w`).
+CubeUI Glances: a cubeui dashboard for one or more [Glances](https://github.com/nicolargo/glances) servers (`glances -w`).
 A Node server samples each host's `/api/4/all`, keeps a short in-memory history and serves it over
 GraphQL (queries plus an SSE subscription); a React app built from the cubeui registry draws it.
 
