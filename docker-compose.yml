@@ -1,0 +1,31 @@
+# The dashboard, watching the Glances servers named in GLANCES_HOSTS (.env is read from beside this file):
+#
+#   docker compose up -d --build
+#
+# To also run Glances on this machine and watch it:
+#
+#   GLANCES_HOSTS=local=http://glances:61208 docker compose --profile glances up -d --build
+name: glances-cubeui
+services:
+  glances-cubeui:
+    image: vantreeseba/glances-cubeui:latest
+    build: .
+    restart: unless-stopped
+    environment:
+      GLANCES_HOSTS: ${GLANCES_HOSTS:?GLANCES_HOSTS is required, for example nas=http://nas:61208. See .env.example}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      NODE_ENV: production
+    ports:
+      - "${PORT:-3000}:3000"
+
+  glances:
+    profiles: [glances]
+    image: nicolargo/glances:latest-full
+    restart: unless-stopped
+    # The host's processes and network, which is what Glances is there to report.
+    pid: host
+    environment:
+      GLANCES_OPT: -w
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # No `ports`. It is for the dashboard beside it.

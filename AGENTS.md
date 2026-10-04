@@ -12,6 +12,7 @@ npm install
 npm run dev             # web on http://localhost:3000, API on :8787
 npm run check && npm test
 npm run build && npm start   # one process on PORT (default 3000) serving dist/
+docker compose up -d --build # the same, in a container; reads GLANCES_HOSTS and PORT from .env
 ```
 
 ## Layout
