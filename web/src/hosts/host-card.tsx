@@ -43,7 +43,13 @@ function gpuDonuts(gpus: Reading['gpus']) {
     ]
       .filter((ring) => ring.percent !== null)
       .map((ring) => (
-        <UsageDonut key={ring.label} label={ring.label} percent={ring.percent} value={formatPercent(ring.percent)} />
+        <UsageDonut
+          key={ring.label}
+          label={ring.label}
+          percent={ring.percent}
+          value={ring.percent}
+          format={formatPercent}
+        />
       ));
   });
 }
@@ -71,15 +77,26 @@ export function HostCard({ host }: { host: Host }) {
           ? []
           : [
               <div key="usage" className="flex flex-wrap justify-around gap-x-4 gap-y-3">
-                <UsageDonut label="CPU" percent={reading.cpu.totalPercent} value={cpu} />
+                <UsageDonut
+                  label="CPU"
+                  percent={reading.cpu.totalPercent}
+                  value={reading.cpu.totalPercent}
+                  format={formatPercent}
+                />
                 <UsageDonut
                   label="Memory"
                   percent={reading.memory.percent}
-                  value={formatPercent(reading.memory.percent)}
+                  value={reading.memory.percent}
+                  format={formatPercent}
                 />
                 {gpuDonuts(reading.gpus)}
                 {reading.load === null ? null : (
-                  <UsageDonut label="Load" percent={loadShare(reading)} value={formatFigure(reading.load.min1)} />
+                  <UsageDonut
+                    label="Load"
+                    percent={loadShare(reading)}
+                    value={reading.load.min1}
+                    format={formatFigure}
+                  />
                 )}
               </div>,
               <Sparkline

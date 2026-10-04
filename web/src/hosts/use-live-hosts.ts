@@ -2,6 +2,7 @@ import { type UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-q
 import { useEffect } from 'react';
 import { HostChangedDocument, type HostFieldsFragment, HostsDocument } from '@/__generated__/graphql';
 import { request, subscribe } from '@/core/gql';
+import { animationMs } from '@/hosts/update-interval';
 
 /** One monitored host as the web app reads it. */
 export type Host = HostFieldsFragment;
@@ -18,6 +19,15 @@ export function useHosts(): UseQueryResult<Host[]> {
     queryKey: HOSTS_KEY,
     queryFn: async () => (await request(HostsDocument)).hosts,
   });
+}
+
+/**
+ * How long a figure should take to move to its new value, from how often updates arrive.
+ *
+ * @returns Milliseconds: half the time between updates, or the default until that can be measured.
+ */
+export function useAnimationMs(): number {
+  return animationMs(useHosts().data);
 }
 
 /**
