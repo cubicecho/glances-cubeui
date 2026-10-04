@@ -7,8 +7,8 @@ const config: CodegenConfig = {
   ignoreNoDocuments: true,
   generates: {
     './web/src/__generated__/graphql.ts': {
-      plugins: ['typescript', 'typescript-operations', 'typed-document-node'],
-      config: { useTypeImports: true, skipTypename: true, avoidOptionals: { field: true } },
+      plugins: ['typescript-operations', 'typed-document-node'],
+      config: { useTypeImports: true, skipTypename: true, enumsAsTypes: true, avoidOptionals: { field: true } },
     },
   },
 };

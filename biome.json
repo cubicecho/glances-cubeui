@@ -68,7 +68,7 @@
   },
   "overrides": [
     {
-      "includes": ["**/components/ui/**", "cubeui-tokens.css"],
+      "includes": ["web/src/components/**", "web/src/lib/**", "cubeui-tokens.css", "cubeui-reset.css"],
       "linter": {
         "enabled": false
       },
