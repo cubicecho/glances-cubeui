@@ -20,6 +20,12 @@ describe('parseReading', () => {
     expect(reading.sensors).toContainEqual({ label: 'Package id 0', value: 45, unit: 'C', kind: 'temperature_core' });
   });
 
+  it('reads a GPU, keeping what the driver left out as null', () => {
+    expect(fixtureReading().gpus).toEqual([
+      { id: 'amd0', name: 'AMD GPU', usagePercent: 7, memoryPercent: 24, temperature: 46, fanSpeedPercent: null },
+    ]);
+  });
+
   it('keeps only the busiest processes, busiest first', () => {
     const { processes } = fixtureReading();
     const cpu = processes.map((process) => process.cpuPercent);
@@ -30,7 +36,14 @@ describe('parseReading', () => {
   it('reads a host with every optional plugin off', () => {
     const reading = parseReading(REQUIRED_PLUGINS, SAMPLED_AT, TOP_PROCESS_COUNT);
     expect(reading.cpu.totalPercent).toBe(REQUIRED_PLUGINS.cpu.total);
-    expect(reading).toMatchObject({ load: null, swap: null, processCount: null, sensors: [], containers: [] });
+    expect(reading).toMatchObject({
+      load: null,
+      swap: null,
+      processCount: null,
+      sensors: [],
+      gpus: [],
+      containers: [],
+    });
   });
 
   it('says which plugin is missing when the payload is not Glances 4', () => {

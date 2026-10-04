@@ -14,6 +14,7 @@ import {
   ContainerTable,
   describeLoad,
   FilesystemTable,
+  GpuTable,
   NetworkTable,
   ProcessTable,
   SensorTable,
@@ -117,6 +118,9 @@ function HostReadings({ host }: { host: Host }) {
       </div>
       {reading ? (
         <>
+          {reading.gpus.length > 0 ? (
+            <Section surface="card" title="GPU" content={<GpuTable gpus={reading.gpus} />} />
+          ) : null}
           <Section surface="card" title="Filesystems" content={<FilesystemTable filesystems={reading.filesystems} />} />
           <Section surface="card" title="Top processes" content={<ProcessTable processes={reading.processes} />} />
           <Section surface="card" title="Containers" content={<ContainerTable containers={reading.containers} />} />

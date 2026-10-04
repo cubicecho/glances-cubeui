@@ -136,6 +136,66 @@ export function SensorTable({ sensors }: { sensors: Reading['sensors'] }) {
 }
 
 /**
+ * A share drawn as a bar with its figure, or a dash when the driver did not report it.
+ *
+ * @param props.percent - 0 to 100, or `null` when unknown.
+ * @param props.label - What the bar measures, as its accessible name.
+ */
+function ShareBar({ percent, label }: { percent: number | null; label: string }) {
+  if (percent === null) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  return (
+    <div className="flex items-center gap-3">
+      <Progress value={percent} label={label} valueLabel={formatPercent(percent)} className="h-1.5 min-w-16 flex-1" />
+      <span className="w-14 text-right tabular-nums">{formatPercent(percent)}</span>
+    </div>
+  );
+}
+
+/**
+ * Graphics cards with how busy each is and how full its memory is.
+ *
+ * @param props.gpus - The reading's GPUs.
+ *
+ * @remarks
+ * Glances reports GPU memory as a share only, so there is no byte figure to show.
+ */
+export function GpuTable({ gpus }: { gpus: Reading['gpus'] }) {
+  return (
+    <Table>
+      <TableCaption className="sr-only">Graphics cards</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>GPU</TableHead>
+          <TableHead className="w-1/4">Usage</TableHead>
+          <TableHead className="w-1/4">Memory</TableHead>
+          <TableHead className={NUMERIC}>Temperature</TableHead>
+          <TableHead className={NUMERIC}>Fan</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {gpus.map((gpu) => (
+          <TableRow key={gpu.id}>
+            <TableHead>
+              {gpu.name ?? gpu.id} <span className="font-normal text-muted-foreground">{gpu.name ? gpu.id : ''}</span>
+            </TableHead>
+            <TableCell>
+              <ShareBar percent={gpu.usagePercent} label={`${gpu.id} usage`} />
+            </TableCell>
+            <TableCell>
+              <ShareBar percent={gpu.memoryPercent} label={`${gpu.id} memory used`} />
+            </TableCell>
+            <TableCell className={NUMERIC}>{gpu.temperature === null ? '—' : `${gpu.temperature} °C`}</TableCell>
+            <TableCell className={NUMERIC}>{formatPercent(gpu.fanSpeedPercent)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
  * Containers the host runs.
  *
  * @param props.containers - The reading's containers.

@@ -68,6 +68,8 @@ export const TYPE_DEFS = /* GraphQL */ `
     disks: [Disk!]!
     "Hardware sensors. Empty where the machine exposes none."
     sensors: [Sensor!]!
+    "Graphics cards. Empty where Glances found none it can read."
+    gpus: [Gpu!]!
     "Containers. Empty where no container engine is reachable."
     containers: [Container!]!
     "The busiest processes, by CPU."
@@ -194,6 +196,22 @@ export const TYPE_DEFS = /* GraphQL */ `
     unit: String
     "Glances' sensor type, such as temperature_core or fan_speed."
     kind: String
+  }
+
+  "One graphics card. Glances reports its memory as a share only, never in bytes."
+  type Gpu {
+    "Glances' identifier, such as amd0 or 0."
+    id: String!
+    "The card's name."
+    name: String
+    "How busy the GPU is, 0 to 100. Null when the driver does not say."
+    usagePercent: Float
+    "How much of its memory is in use, 0 to 100. Null when the driver does not say."
+    memoryPercent: Float
+    "Degrees Celsius."
+    temperature: Float
+    "Fan speed, 0 to 100. Null on a card with no fan sensor."
+    fanSpeedPercent: Float
   }
 
   "One container."

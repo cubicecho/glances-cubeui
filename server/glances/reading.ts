@@ -70,6 +70,15 @@ const diskSchema = z.object({
 
 const sensorSchema = z.object({ label: z.string(), value: optionalQuantity, unit: optionalText, type: optionalText });
 
+const gpuSchema = z.object({
+  gpu_id: z.union([z.string(), z.number()]),
+  name: optionalText,
+  proc: optionalQuantity,
+  mem: optionalQuantity,
+  temperature: optionalQuantity,
+  fan_speed: optionalQuantity,
+});
+
 const containerSchema = z.object({
   name: z.string(),
   status: optionalText,
@@ -112,6 +121,7 @@ const payloadSchema = z.object({
   network: pluginList(networkSchema),
   diskio: pluginList(diskSchema),
   sensors: pluginList(sensorSchema),
+  gpu: pluginList(gpuSchema),
   containers: pluginList(containerSchema),
   processlist: pluginList(processSchema),
   processcount: processCountSchema.nullish(),
@@ -139,6 +149,8 @@ export interface Reading {
   networkInterfaces: NetworkInterface[];
   disks: Disk[];
   sensors: Sensor[];
+  /** Graphics cards. Empty where Glances found none it can read. */
+  gpus: Gpu[];
   containers: Container[];
   /** The busiest processes, by CPU. */
   processes: Process[];
@@ -230,6 +242,21 @@ export interface Sensor {
   unit: string | null;
   /** Glances' sensor type, such as "temperature_core" or "fan_speed". */
   kind: string | null;
+}
+
+/** One graphics card. Glances reports its memory as a share only, never in bytes. */
+export interface Gpu {
+  /** Glances' identifier, such as "amd0" or "0". */
+  id: string;
+  name: string | null;
+  /** How busy the GPU is, 0 to 100. Null when the driver does not say. */
+  usagePercent: number | null;
+  /** How much of its memory is in use, 0 to 100. Null when the driver does not say. */
+  memoryPercent: number | null;
+  /** Degrees Celsius. */
+  temperature: number | null;
+  /** Fan speed, 0 to 100. Null on a card with no fan sensor. */
+  fanSpeedPercent: number | null;
 }
 
 /** One container. */
@@ -352,6 +379,14 @@ export function parseReading(payload: unknown, sampledAt: Date, topProcessCount:
       value: sensor.value,
       unit: sensor.unit,
       kind: sensor.type,
+    })),
+    gpus: plugins.gpu.map((gpu) => ({
+      id: String(gpu.gpu_id),
+      name: gpu.name,
+      usagePercent: gpu.proc,
+      memoryPercent: gpu.mem,
+      temperature: gpu.temperature,
+      fanSpeedPercent: gpu.fan_speed,
     })),
     containers: plugins.containers.map((container) => ({
       name: container.name,

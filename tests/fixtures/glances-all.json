@@ -1075,5 +1075,15 @@
   "mask": "255.255.0.0",
   "mask_cidr": 16
  },
- "gpu": []
+ "gpu": [
+  {
+   "key": "gpu_id",
+   "gpu_id": "amd0",
+   "name": "AMD GPU",
+   "mem": 24,
+   "proc": 7,
+   "temperature": 46,
+   "fan_speed": null
+  }
+ ]
 }

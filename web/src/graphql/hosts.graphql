@@ -64,6 +64,14 @@ fragment HostFields on Host {
       unit
       kind
     }
+    gpus {
+      id
+      name
+      usagePercent
+      memoryPercent
+      temperature
+      fanSpeedPercent
+    }
     containers {
       name
       status
