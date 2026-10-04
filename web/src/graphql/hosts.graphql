@@ -1,0 +1,109 @@
+fragment HostFields on Host {
+  name
+  status
+  error
+  history {
+    sampledAt
+    cpuPercent
+    memoryPercent
+    load1
+    receivedBytesPerSecond
+    sentBytesPerSecond
+  }
+  reading {
+    sampledAt
+    glancesVersion
+    uptime
+    system {
+      hostname
+      osName
+      osVersion
+      distribution
+      description
+    }
+    cpu {
+      totalPercent
+      userPercent
+      systemPercent
+      iowaitPercent
+      name
+      coreCount
+    }
+    load {
+      min1
+      min5
+      min15
+    }
+    memory {
+      totalBytes
+      usedBytes
+      availableBytes
+      percent
+    }
+    swap {
+      totalBytes
+      usedBytes
+      percent
+    }
+    filesystems {
+      mountPoint
+      deviceName
+      type
+      sizeBytes
+      usedBytes
+      percent
+    }
+    networkInterfaces {
+      name
+      receivedBytesPerSecond
+      sentBytesPerSecond
+    }
+    sensors {
+      label
+      value
+      unit
+      kind
+    }
+    gpus {
+      id
+      name
+      usagePercent
+      memoryPercent
+      temperature
+      fanSpeedPercent
+    }
+    containers {
+      name
+      status
+      engine
+      image
+      cpuPercent
+      memoryBytes
+    }
+    processes {
+      pid
+      name
+      user
+      cpuPercent
+      memoryPercent
+      memoryBytes
+    }
+    processCount {
+      total
+      running
+      threads
+    }
+  }
+}
+
+query Hosts {
+  hosts {
+    ...HostFields
+  }
+}
+
+subscription HostChanged {
+  hostChanged {
+    ...HostFields
+  }
+}

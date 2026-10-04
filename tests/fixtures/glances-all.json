@@ -1,0 +1,1089 @@
+{
+ "now": {
+  "iso": "2026-10-04T20:30:45+00:00",
+  "custom": "2026-10-04 20:30:45 UTC"
+ },
+ "core": {
+  "phys": 8,
+  "log": 8
+ },
+ "version": "4.5.7",
+ "processlist": [
+  {
+   "pid": 859,
+   "username": "user",
+   "cpu_times": {
+    "user": 4122.66,
+    "system": 2038.82,
+    "children_user": 7.12,
+    "children_system": 38.96,
+    "iowait": 0.0
+   },
+   "memory_percent": 2.1614026513531677,
+   "cpu_percent": 1.7,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "dockerd"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "dockerd",
+   "num_threads": 55,
+   "memory_info": {
+    "rss": 362291200,
+    "vms": 5823725568,
+    "shared": 68497408,
+    "text": 38559744,
+    "lib": 0,
+    "data": 837185536,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 3251,
+   "username": "user",
+   "cpu_times": {
+    "user": 5098.7,
+    "system": 885.37,
+    "children_user": 0.45,
+    "children_system": 1.34,
+    "iowait": 0.0
+   },
+   "memory_percent": 6.468202089315168,
+   "cpu_percent": 1.5,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "MainThread"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 1000,
+    "effective": 1000,
+    "saved": 1000
+   },
+   "name": "MainThread",
+   "num_threads": 11,
+   "memory_info": {
+    "rss": 1084190720,
+    "vms": 11283873792,
+    "shared": 61145088,
+    "text": 42848256,
+    "lib": 0,
+    "data": 1643233280,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 752,
+   "username": "user",
+   "cpu_times": {
+    "user": 3566.78,
+    "system": 1426.95,
+    "children_user": 3.99,
+    "children_system": 1.6,
+    "iowait": 0.0
+   },
+   "memory_percent": 0.4844278819720203,
+   "cpu_percent": 1.5,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "containerd"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "containerd",
+   "num_threads": 21,
+   "memory_info": {
+    "rss": 81199104,
+    "vms": 2839977984,
+    "shared": 45150208,
+    "text": 20168704,
+    "lib": 0,
+    "data": 273285120,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 5264,
+   "username": "user",
+   "cpu_times": {
+    "user": 4823.03,
+    "system": 2107.83,
+    "children_user": 0.0,
+    "children_system": 0.0,
+    "iowait": 0.0
+   },
+   "memory_percent": 12.565312480909036,
+   "cpu_percent": 0.9,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "java"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "java",
+   "num_threads": 149,
+   "memory_info": {
+    "rss": 2106179584,
+    "vms": 9583394816,
+    "shared": 240050176,
+    "text": 4096,
+    "lib": 0,
+    "data": 3102367744,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 1732845,
+   "username": "user",
+   "cpu_times": {
+    "user": 1.2,
+    "system": 0.54,
+    "children_user": 0.0,
+    "children_system": 0.02,
+    "iowait": 0.0
+   },
+   "memory_percent": 0.6450241309792901,
+   "cpu_percent": 0.6,
+   "nice": 0,
+   "io_counters": [
+    0,
+    1527808,
+    0,
+    1527808,
+    1
+   ],
+   "cmdline": [
+    "python3.14"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "python3.14",
+   "num_threads": 21,
+   "memory_info": {
+    "rss": 108118016,
+    "vms": 169078784,
+    "shared": 25473024,
+    "text": 4096,
+    "lib": 0,
+    "data": 131723264,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 1877,
+   "username": "user",
+   "cpu_times": {
+    "user": 399.87,
+    "system": 260.71,
+    "children_user": 3316.08,
+    "children_system": 2732.31,
+    "iowait": 0.0
+   },
+   "memory_percent": 0.08899749526544078,
+   "cpu_percent": 0.2,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "containerd-shim-runc-v2"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "containerd-shim-runc-v2",
+   "num_threads": 13,
+   "memory_info": {
+    "rss": 14917632,
+    "vms": 1264996352,
+    "shared": 7823360,
+    "text": 3727360,
+    "lib": 0,
+    "data": 47861760,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 1881,
+   "username": "user",
+   "cpu_times": {
+    "user": 385.55,
+    "system": 258.84,
+    "children_user": 3315.85,
+    "children_system": 2733.15,
+    "iowait": 0.0
+   },
+   "memory_percent": 0.08823996578899139,
+   "cpu_percent": 0.2,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "containerd-shim-runc-v2"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "containerd-shim-runc-v2",
+   "num_threads": 12,
+   "memory_info": {
+    "rss": 14790656,
+    "vms": 1265258496,
+    "shared": 7888896,
+    "text": 3727360,
+    "lib": 0,
+    "data": 48123904,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  },
+  {
+   "pid": 1878,
+   "username": "user",
+   "cpu_times": {
+    "user": 380.13,
+    "system": 265.76,
+    "children_user": 3314.31,
+    "children_system": 2732.67,
+    "iowait": 0.0
+   },
+   "memory_percent": 0.08777567352923209,
+   "cpu_percent": 0.2,
+   "nice": 0,
+   "io_counters": [
+    0,
+    0,
+    0,
+    0,
+    0
+   ],
+   "cmdline": [
+    "containerd-shim-runc-v2"
+   ],
+   "status": "S",
+   "gids": {
+    "real": 0,
+    "effective": 0,
+    "saved": 0
+   },
+   "name": "containerd-shim-runc-v2",
+   "num_threads": 12,
+   "memory_info": {
+    "rss": 14712832,
+    "vms": 1264996352,
+    "shared": 7819264,
+    "text": 3727360,
+    "lib": 0,
+    "data": 47861760,
+    "dirty": 0
+   },
+   "key": "pid",
+   "time_since_update": 82.25687551498413
+  }
+ ],
+ "memswap": {
+  "total": 4294963200,
+  "used": 0,
+  "free": 4294963200,
+  "percent": 0.0,
+  "sin": 0,
+  "sout": 0,
+  "time_since_update": 13.450922012329102
+ },
+ "load": {
+  "min1": 1.12841796875,
+  "min5": 1.14501953125,
+  "min15": 1.10302734375,
+  "cpucore": 8
+ },
+ "system": {
+  "os_name": "Linux",
+  "hostname": "fixture-host",
+  "platform": "64bit",
+  "os_version": "6.8.0-139-generic",
+  "linux_distro": "Alpine Linux 3.24.2",
+  "hr_name": "Alpine Linux 3.24.2 64bit / Linux 6.8.0-139-generic"
+ },
+ "fs": [
+  {
+   "device_name": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+   "fs_type": "ext4",
+   "mnt_point": "/etc/resolv.conf",
+   "options": "rw,relatime",
+   "size": 64223113216,
+   "used": 43801554944,
+   "free": 17461211136,
+   "percent": 71.5,
+   "key": "mnt_point"
+  },
+  {
+   "device_name": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+   "fs_type": "ext4",
+   "mnt_point": "/etc/hostname",
+   "options": "rw,relatime",
+   "size": 64223113216,
+   "used": 43801554944,
+   "free": 17461211136,
+   "percent": 71.5,
+   "key": "mnt_point"
+  },
+  {
+   "device_name": "/dev/mapper/ubuntu--vg-ubuntu--lv",
+   "fs_type": "ext4",
+   "mnt_point": "/etc/hosts",
+   "options": "rw,relatime",
+   "size": 64223113216,
+   "used": 43801554944,
+   "free": 17461211136,
+   "percent": 71.5,
+   "key": "mnt_point"
+  }
+ ],
+ "quicklook": {
+  "cpu_name": "AMD Ryzen 9 5900X 12-Core Processor",
+  "cpu_hz_current": 3693061999.999999,
+  "cpu_hz": null,
+  "cpu": 1.8,
+  "percpu": [
+   {
+    "key": "cpu_number",
+    "cpu_number": 0,
+    "total": 2.0,
+    "user": 0.8,
+    "system": 0.7,
+    "idle": 98.0,
+    "nice": 0.0,
+    "iowait": 0.4,
+    "irq": 0.0,
+    "softirq": 0.1,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 1,
+    "total": 3.4,
+    "user": 1.9,
+    "system": 1.3,
+    "idle": 96.6,
+    "nice": 0.0,
+    "iowait": 0.0,
+    "irq": 0.0,
+    "softirq": 0.1,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 2,
+    "total": 2.0,
+    "user": 1.1,
+    "system": 0.9,
+    "idle": 98.0,
+    "nice": 0.0,
+    "iowait": 0.0,
+    "irq": 0.0,
+    "softirq": 0.0,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 3,
+    "total": 1.6,
+    "user": 0.9,
+    "system": 0.7,
+    "idle": 98.4,
+    "nice": 0.0,
+    "iowait": 0.0,
+    "irq": 0.0,
+    "softirq": 0.0,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 4,
+    "total": 1.4,
+    "user": 0.8,
+    "system": 0.6,
+    "idle": 98.6,
+    "nice": 0.0,
+    "iowait": 0.0,
+    "irq": 0.0,
+    "softirq": 0.0,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 5,
+    "total": 1.7,
+    "user": 1.0,
+    "system": 0.7,
+    "idle": 98.3,
+    "nice": 0.0,
+    "iowait": 0.1,
+    "irq": 0.0,
+    "softirq": 0.0,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 6,
+    "total": 2.5,
+    "user": 0.7,
+    "system": 0.7,
+    "idle": 97.5,
+    "nice": 0.0,
+    "iowait": 1.0,
+    "irq": 0.0,
+    "softirq": 0.1,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   },
+   {
+    "key": "cpu_number",
+    "cpu_number": 7,
+    "total": 4.0,
+    "user": 0.7,
+    "system": 0.7,
+    "idle": 96.0,
+    "nice": 0.0,
+    "iowait": 2.6,
+    "irq": 0.0,
+    "softirq": 0.0,
+    "steal": 0.0,
+    "guest": 0.0,
+    "guest_nice": 0.0,
+    "dpc": null,
+    "interrupt": null
+   }
+  ],
+  "mem": 29.7,
+  "swap": 0.0,
+  "cpu_log_core": 8,
+  "cpu_phys_core": 8,
+  "load": 13.8,
+  "gpu_mem": 0,
+  "gpu_proc": 0
+ },
+ "mem": {
+  "total": 16761856000,
+  "available": 11785162752,
+  "percent": 29.7,
+  "used": 4976693248,
+  "free": 4754477056,
+  "active": 5735399424,
+  "inactive": 4994240512,
+  "buffers": 704090112,
+  "cached": 6940168192,
+  "shared": 259768320,
+  "percent_min": 29.7,
+  "percent_max": 29.7,
+  "percent_mean": 29.7
+ },
+ "percpu": [
+  {
+   "key": "cpu_number",
+   "cpu_number": 0,
+   "total": 2.0,
+   "user": 0.8,
+   "system": 0.7,
+   "idle": 98.0,
+   "nice": 0.0,
+   "iowait": 0.4,
+   "irq": 0.0,
+   "softirq": 0.1,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 1,
+   "total": 3.4,
+   "user": 1.9,
+   "system": 1.3,
+   "idle": 96.6,
+   "nice": 0.0,
+   "iowait": 0.0,
+   "irq": 0.0,
+   "softirq": 0.1,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 2,
+   "total": 2.0,
+   "user": 1.1,
+   "system": 0.9,
+   "idle": 98.0,
+   "nice": 0.0,
+   "iowait": 0.0,
+   "irq": 0.0,
+   "softirq": 0.0,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 3,
+   "total": 1.6,
+   "user": 0.9,
+   "system": 0.7,
+   "idle": 98.4,
+   "nice": 0.0,
+   "iowait": 0.0,
+   "irq": 0.0,
+   "softirq": 0.0,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 4,
+   "total": 1.4,
+   "user": 0.8,
+   "system": 0.6,
+   "idle": 98.6,
+   "nice": 0.0,
+   "iowait": 0.0,
+   "irq": 0.0,
+   "softirq": 0.0,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 5,
+   "total": 1.7,
+   "user": 1.0,
+   "system": 0.7,
+   "idle": 98.3,
+   "nice": 0.0,
+   "iowait": 0.1,
+   "irq": 0.0,
+   "softirq": 0.0,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 6,
+   "total": 2.5,
+   "user": 0.7,
+   "system": 0.7,
+   "idle": 97.5,
+   "nice": 0.0,
+   "iowait": 1.0,
+   "irq": 0.0,
+   "softirq": 0.1,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  },
+  {
+   "key": "cpu_number",
+   "cpu_number": 7,
+   "total": 4.0,
+   "user": 0.7,
+   "system": 0.7,
+   "idle": 96.0,
+   "nice": 0.0,
+   "iowait": 2.6,
+   "irq": 0.0,
+   "softirq": 0.0,
+   "steal": 0.0,
+   "guest": 0.0,
+   "guest_nice": 0.0,
+   "dpc": null,
+   "interrupt": null
+  }
+ ],
+ "uptime": "11 days, 19:38:21",
+ "processcount": {
+  "total": 282,
+  "running": 0,
+  "sleeping": 188,
+  "thread": 1053,
+  "pid_max": 4194304
+ },
+ "sensors": [
+  {
+   "label": "Package id 0",
+   "unit": "C",
+   "value": 45,
+   "warning": 80,
+   "critical": 100,
+   "type": "temperature_core",
+   "key": "label"
+  },
+  {
+   "label": "fan1",
+   "unit": "R",
+   "value": 1200,
+   "warning": null,
+   "critical": null,
+   "type": "fan_speed",
+   "key": "label"
+  }
+ ],
+ "containers": [
+  {
+   "key": "name",
+   "name": "service-1",
+   "id": "0000000000000000000000000000000000000000000000000000000000000000",
+   "status": "healthy",
+   "created": "2026-08-27T18:43:44.176267642Z",
+   "command": "entrypoint",
+   "io": {
+    "cumulative_ior": 45510656,
+    "cumulative_iow": 41213952,
+    "time_since_update": 13,
+    "ior": 0,
+    "iow": 0
+   },
+   "cpu": {
+    "total": 3.632411260709914,
+    "limit": 8.0
+   },
+   "memory": {
+    "usage": 80539648,
+    "limit": 16761856000,
+    "inactive_file": 18026496
+   },
+   "network": {
+    "cumulative_rx": 51887897,
+    "cumulative_tx": 76614334,
+    "time_since_update": 13,
+    "rx": 203,
+    "tx": 66
+   },
+   "io_rx": 0,
+   "io_wx": 0,
+   "cpu_percent": 3.632411260709914,
+   "memory_percent": null,
+   "network_rx": 15,
+   "network_tx": 5,
+   "uptime": "a week",
+   "image": [
+    "example/image:latest"
+   ],
+   "cpu_limit": 8.0,
+   "memory_usage": 80539648,
+   "memory_inactive_file": 18026496,
+   "memory_limit": 16761856000,
+   "engine": "docker"
+  },
+  {
+   "key": "name",
+   "name": "service-2",
+   "id": "0101010101010101010101010101010101010101010101010101010101010101",
+   "status": "running",
+   "created": "2026-06-07T22:48:30.940966753Z",
+   "command": "entrypoint",
+   "io": {
+    "cumulative_ior": 566181888,
+    "cumulative_iow": 4096,
+    "time_since_update": 13,
+    "ior": 0,
+    "iow": 0
+   },
+   "cpu": {
+    "total": 0.4773234200743494,
+    "limit": 8.0
+   },
+   "memory": {
+    "usage": 1748221952,
+    "limit": 16761856000,
+    "inactive_file": 496308224
+   },
+   "network": {
+    "cumulative_rx": 1933750793,
+    "cumulative_tx": 8422057548,
+    "time_since_update": 13,
+    "rx": 35882,
+    "tx": 132409
+   },
+   "io_rx": 0,
+   "io_wx": 0,
+   "cpu_percent": 0.4773234200743494,
+   "memory_percent": null,
+   "network_rx": 2760,
+   "network_tx": 10185,
+   "uptime": "a week",
+   "image": [
+    "example/image:latest"
+   ],
+   "cpu_limit": 8.0,
+   "memory_usage": 1748221952,
+   "memory_inactive_file": 496308224,
+   "memory_limit": 16761856000,
+   "engine": "docker"
+  },
+  {
+   "key": "name",
+   "name": "service-3",
+   "id": "0202020202020202020202020202020202020202020202020202020202020202",
+   "status": "running",
+   "created": "2026-06-07T22:48:25.453316439Z",
+   "command": "entrypoint",
+   "io": {
+    "cumulative_ior": 588988416,
+    "cumulative_iow": 9335599104,
+    "time_since_update": 13,
+    "ior": 0,
+    "iow": 118784
+   },
+   "cpu": {
+    "total": 0.429379652605459,
+    "limit": 8.0
+   },
+   "memory": {
+    "usage": 2545418240,
+    "limit": 16761856000,
+    "inactive_file": 315326464
+   },
+   "network": {
+    "cumulative_rx": 8481251910,
+    "cumulative_tx": 1971615642,
+    "time_since_update": 13,
+    "rx": 132409,
+    "tx": 35882
+   },
+   "io_rx": 0,
+   "io_wx": 9137,
+   "cpu_percent": 0.429379652605459,
+   "memory_percent": null,
+   "network_rx": 10185,
+   "network_tx": 2760,
+   "uptime": "a week",
+   "image": [
+    "example/image:latest"
+   ],
+   "cpu_limit": 8.0,
+   "memory_usage": 2545418240,
+   "memory_inactive_file": 315326464,
+   "memory_limit": 16761856000,
+   "engine": "docker"
+  }
+ ],
+ "diskio": [
+  {
+   "read_count": 0,
+   "write_count": 506,
+   "read_bytes": 0,
+   "write_bytes": 3723264,
+   "read_time": 0,
+   "write_time": 641,
+   "key": "disk_name",
+   "disk_name": "sda",
+   "time_since_update": 13.413504838943481,
+   "read_count_gauge": 160871,
+   "read_count_rate_per_sec": 0.0,
+   "write_count_gauge": 11196212,
+   "write_count_rate_per_sec": 37.0,
+   "read_bytes_gauge": 3725235200,
+   "read_bytes_rate_per_sec": 0.0,
+   "write_bytes_gauge": 109008929280,
+   "write_bytes_rate_per_sec": 277575.0,
+   "read_time_gauge": 202858,
+   "read_time_rate_per_sec": 0.0,
+   "write_time_gauge": 26653834,
+   "write_time_rate_per_sec": 47.0,
+   "read_latency": 0,
+   "write_latency": 1
+  },
+  {
+   "read_count": 0,
+   "write_count": 0,
+   "read_bytes": 0,
+   "write_bytes": 0,
+   "read_time": 0,
+   "write_time": 0,
+   "key": "disk_name",
+   "disk_name": "sda1",
+   "time_since_update": 13.413504838943481,
+   "read_count_gauge": 258,
+   "read_count_rate_per_sec": 0.0,
+   "write_count_gauge": 1,
+   "write_count_rate_per_sec": 0.0,
+   "read_bytes_gauge": 10572288,
+   "read_bytes_rate_per_sec": 0.0,
+   "write_bytes_gauge": 512,
+   "write_bytes_rate_per_sec": 0.0,
+   "read_time_gauge": 37,
+   "read_time_rate_per_sec": 0.0,
+   "write_time_gauge": 0,
+   "write_time_rate_per_sec": 0,
+   "read_latency": 0,
+   "write_latency": 0
+  },
+  {
+   "read_count": 0,
+   "write_count": 0,
+   "read_bytes": 0,
+   "write_bytes": 0,
+   "read_time": 0,
+   "write_time": 0,
+   "key": "disk_name",
+   "disk_name": "sda2",
+   "time_since_update": 13.413504838943481,
+   "read_count_gauge": 568,
+   "read_count_rate_per_sec": 0.0,
+   "write_count_gauge": 363,
+   "write_count_rate_per_sec": 0.0,
+   "read_bytes_gauge": 30963712,
+   "read_bytes_rate_per_sec": 0.0,
+   "write_bytes_gauge": 101990400,
+   "write_bytes_rate_per_sec": 0.0,
+   "read_time_gauge": 134,
+   "read_time_rate_per_sec": 0.0,
+   "write_time_gauge": 2104,
+   "write_time_rate_per_sec": 0.0,
+   "read_latency": 0,
+   "write_latency": 0
+  },
+  {
+   "read_count": 0,
+   "write_count": 506,
+   "read_bytes": 0,
+   "write_bytes": 3723264,
+   "read_time": 0,
+   "write_time": 640,
+   "key": "disk_name",
+   "disk_name": "sda3",
+   "time_since_update": 13.413504838943481,
+   "read_count_gauge": 159221,
+   "read_count_rate_per_sec": 0.0,
+   "write_count_gauge": 11195848,
+   "write_count_rate_per_sec": 37.0,
+   "read_bytes_gauge": 3656973312,
+   "read_bytes_rate_per_sec": 0.0,
+   "write_bytes_gauge": 108906938368,
+   "write_bytes_rate_per_sec": 277575.0,
+   "read_time_gauge": 202552,
+   "read_time_rate_per_sec": 0.0,
+   "write_time_gauge": 26651729,
+   "write_time_rate_per_sec": 47.0,
+   "read_latency": 0,
+   "write_latency": 1
+  },
+  {
+   "read_count": 0,
+   "write_count": 841,
+   "read_bytes": 0,
+   "write_bytes": 3723264,
+   "read_time": 0,
+   "write_time": 663,
+   "key": "disk_name",
+   "disk_name": "dm-0",
+   "time_since_update": 13.413504838943481,
+   "read_count_gauge": 211785,
+   "read_count_rate_per_sec": 0.0,
+   "write_count_gauge": 28159973,
+   "write_count_rate_per_sec": 62.0,
+   "read_bytes_gauge": 3538851840,
+   "read_bytes_rate_per_sec": 0.0,
+   "write_bytes_gauge": 108906938368,
+   "write_bytes_rate_per_sec": 277575.0,
+   "read_time_gauge": 316154,
+   "read_time_rate_per_sec": 0.0,
+   "write_time_gauge": 34699788,
+   "write_time_rate_per_sec": 49.0,
+   "read_latency": 0,
+   "write_latency": 0
+  }
+ ],
+ "network": [
+  {
+   "bytes_sent": 271551,
+   "bytes_recv": 271551,
+   "speed": 0,
+   "key": "interface_name",
+   "interface_name": "lo",
+   "alias": null,
+   "bytes_all": 543102,
+   "time_since_update": 13.413492679595947,
+   "bytes_recv_gauge": 274607,
+   "bytes_recv_rate_per_sec": 20244.0,
+   "bytes_sent_gauge": 274607,
+   "bytes_sent_rate_per_sec": 20244.0,
+   "bytes_all_gauge": 549214,
+   "bytes_all_rate_per_sec": 40489.0
+  },
+  {
+   "bytes_sent": 0,
+   "bytes_recv": 0,
+   "speed": 10485760000,
+   "key": "interface_name",
+   "interface_name": "eth0",
+   "alias": null,
+   "bytes_all": 0,
+   "time_since_update": 13.413492679595947,
+   "bytes_recv_gauge": 1016,
+   "bytes_recv_rate_per_sec": 0.0,
+   "bytes_sent_gauge": 1555,
+   "bytes_sent_rate_per_sec": 0.0,
+   "bytes_all_gauge": 2571,
+   "bytes_all_rate_per_sec": 0.0
+  }
+ ],
+ "cpu": {
+  "total": 1.8,
+  "user": 1.0,
+  "nice": 0.0,
+  "system": 0.8,
+  "idle": 97.6,
+  "iowait": 0.5,
+  "irq": 0.0,
+  "steal": 0.0,
+  "guest": 0.0,
+  "ctx_switches": 87524,
+  "interrupts": 65033,
+  "soft_interrupts": 16301,
+  "syscalls": 0,
+  "cpucore": 8,
+  "time_since_update": 13.413398027420044,
+  "ctx_switches_gauge": 2975047224,
+  "ctx_switches_rate_per_sec": 6525.0,
+  "interrupts_gauge": 2399152125,
+  "interrupts_rate_per_sec": 4848.0,
+  "soft_interrupts_gauge": 709321390,
+  "soft_interrupts_rate_per_sec": 1215.0,
+  "syscalls_gauge": 0,
+  "syscalls_rate_per_sec": 0
+ },
+ "ip": {
+  "address": "172.17.0.2",
+  "mask": "255.255.0.0",
+  "mask_cidr": 16
+ },
+ "gpu": [
+  {
+   "key": "gpu_id",
+   "gpu_id": "amd0",
+   "name": "AMD GPU",
+   "mem": 24,
+   "proc": 7,
+   "temperature": 46,
+   "fan_speed": null
+  }
+ ]
+}

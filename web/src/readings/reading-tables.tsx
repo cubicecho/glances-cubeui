@@ -1,0 +1,277 @@
+import { EmptyState } from '@/components/page';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { formatBytes, formatFigure, formatPercent, formatRate } from '@/core/format';
+import type { Host } from '@/hosts/use-live-hosts';
+import { UsageBar } from '@/readings/usage-bar';
+
+type Reading = NonNullable<Host['reading']>;
+
+const NUMERIC = 'text-right tabular-nums';
+
+/**
+ * Mounted filesystems with how full each is.
+ *
+ * @param props.filesystems - The reading's filesystems.
+ */
+export function FilesystemTable({ filesystems }: { filesystems: Reading['filesystems'] }) {
+  if (filesystems.length === 0) {
+    return <EmptyState compact title="No filesystems reported." />;
+  }
+  return (
+    <Table>
+      <TableCaption className="sr-only">Filesystems</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Mount point</TableHead>
+          <TableHead>Device</TableHead>
+          <TableHead className="w-1/4">Usage</TableHead>
+          <TableHead className={NUMERIC}>Used</TableHead>
+          <TableHead className={NUMERIC}>Size</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {filesystems.map((filesystem) => (
+          <TableRow key={filesystem.mountPoint}>
+            <TableHead>{filesystem.mountPoint}</TableHead>
+            <TableCell className="text-muted-foreground">{filesystem.deviceName ?? '—'}</TableCell>
+            <TableCell>
+              <UsageBar
+                percent={filesystem.percent}
+                label={`${filesystem.mountPoint} used`}
+                valueLabel={formatPercent(filesystem.percent)}
+              />
+            </TableCell>
+            <TableCell className={NUMERIC}>
+              {formatBytes(filesystem.usedBytes)} ({formatPercent(filesystem.percent)})
+            </TableCell>
+            <TableCell className={NUMERIC}>{formatBytes(filesystem.sizeBytes)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * Orders interfaces by their current traffic, so idle bridges sink below the ones in use.
+ *
+ * @param interfaces - The reading's network interfaces.
+ * @returns A sorted copy, busiest first.
+ */
+function busiestFirst(interfaces: Reading['networkInterfaces']): Reading['networkInterfaces'] {
+  const traffic = (networkInterface: Reading['networkInterfaces'][number]) =>
+    networkInterface.receivedBytesPerSecond + networkInterface.sentBytesPerSecond;
+  return [...interfaces].sort((first, second) => traffic(second) - traffic(first));
+}
+
+/**
+ * Network interfaces with their current rates, busiest first.
+ *
+ * @param props.interfaces - The reading's network interfaces.
+ */
+export function NetworkTable({ interfaces }: { interfaces: Reading['networkInterfaces'] }) {
+  if (interfaces.length === 0) {
+    return <EmptyState compact title="No network interfaces reported." />;
+  }
+  return (
+    <Table>
+      <TableCaption className="sr-only">Network interfaces</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Interface</TableHead>
+          <TableHead className={NUMERIC}>Received</TableHead>
+          <TableHead className={NUMERIC}>Sent</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {busiestFirst(interfaces).map((networkInterface) => (
+          <TableRow key={networkInterface.name}>
+            <TableHead>{networkInterface.name}</TableHead>
+            <TableCell className={NUMERIC}>{formatRate(networkInterface.receivedBytesPerSecond)}</TableCell>
+            <TableCell className={NUMERIC}>{formatRate(networkInterface.sentBytesPerSecond)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * Temperature and fan sensors.
+ *
+ * @param props.sensors - The reading's sensors.
+ */
+export function SensorTable({ sensors }: { sensors: Reading['sensors'] }) {
+  if (sensors.length === 0) {
+    return <EmptyState compact title="This host reports no sensors." />;
+  }
+  return (
+    <Table>
+      <TableCaption className="sr-only">Sensors</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Sensor</TableHead>
+          <TableHead>Kind</TableHead>
+          <TableHead className={NUMERIC}>Value</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {sensors.map((sensor, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: Glances repeats labels across chips, and the list keeps its order.
+          <TableRow key={`${sensor.label}-${index}`}>
+            <TableHead>{sensor.label}</TableHead>
+            <TableCell className="text-muted-foreground">{sensor.kind ?? '—'}</TableCell>
+            <TableCell className={NUMERIC}>
+              {sensor.value === null ? '—' : `${sensor.value} ${sensor.unit ?? ''}`.trim()}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * A share drawn as a bar with its figure, or a dash when the driver did not report it.
+ *
+ * @param props.percent - 0 to 100, or `null` when unknown.
+ * @param props.label - What the bar measures, as its accessible name.
+ */
+function ShareBar({ percent, label }: { percent: number | null; label: string }) {
+  if (percent === null) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  return (
+    <div className="flex items-center gap-3">
+      <UsageBar percent={percent} label={label} valueLabel={formatPercent(percent)} className="min-w-16 flex-1" />
+      <span className="w-14 text-right tabular-nums">{formatPercent(percent)}</span>
+    </div>
+  );
+}
+
+/**
+ * Graphics cards with how busy each is and how full its memory is.
+ *
+ * @param props.gpus - The reading's GPUs.
+ *
+ * @remarks
+ * Glances reports GPU memory as a share only, so there is no byte figure to show.
+ */
+export function GpuTable({ gpus }: { gpus: Reading['gpus'] }) {
+  return (
+    <Table>
+      <TableCaption className="sr-only">Graphics cards</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>GPU</TableHead>
+          <TableHead className="w-1/4">Usage</TableHead>
+          <TableHead className="w-1/4">Memory</TableHead>
+          <TableHead className={NUMERIC}>Temperature</TableHead>
+          <TableHead className={NUMERIC}>Fan</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {gpus.map((gpu) => (
+          <TableRow key={gpu.id}>
+            <TableHead>
+              {gpu.name ?? gpu.id} <span className="font-normal text-muted-foreground">{gpu.name ? gpu.id : ''}</span>
+            </TableHead>
+            <TableCell>
+              <ShareBar percent={gpu.usagePercent} label={`${gpu.id} usage`} />
+            </TableCell>
+            <TableCell>
+              <ShareBar percent={gpu.memoryPercent} label={`${gpu.id} memory used`} />
+            </TableCell>
+            <TableCell className={NUMERIC}>{gpu.temperature === null ? '—' : `${gpu.temperature} °C`}</TableCell>
+            <TableCell className={NUMERIC}>{formatPercent(gpu.fanSpeedPercent)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * Containers the host runs.
+ *
+ * @param props.containers - The reading's containers.
+ */
+export function ContainerTable({ containers }: { containers: Reading['containers'] }) {
+  if (containers.length === 0) {
+    return <EmptyState compact title="This host reports no containers." />;
+  }
+  return (
+    <Table>
+      <TableCaption className="sr-only">Containers</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Container</TableHead>
+          <TableHead>Status</TableHead>
+          <TableHead>Image</TableHead>
+          <TableHead className={NUMERIC}>CPU</TableHead>
+          <TableHead className={NUMERIC}>Memory</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {containers.map((container) => (
+          <TableRow key={container.name}>
+            <TableHead>{container.name}</TableHead>
+            <TableCell>{container.status ?? '—'}</TableCell>
+            <TableCell className="text-muted-foreground">{container.image ?? '—'}</TableCell>
+            <TableCell className={NUMERIC}>{formatPercent(container.cpuPercent)}</TableCell>
+            <TableCell className={NUMERIC}>{formatBytes(container.memoryBytes)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * The busiest processes, as the server ranked them.
+ *
+ * @param props.processes - The reading's top processes.
+ */
+export function ProcessTable({ processes }: { processes: Reading['processes'] }) {
+  if (processes.length === 0) {
+    return <EmptyState compact title="No processes reported." />;
+  }
+  return (
+    <Table>
+      <TableCaption className="sr-only">Top processes</TableCaption>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Process</TableHead>
+          <TableHead className={NUMERIC}>PID</TableHead>
+          <TableHead>User</TableHead>
+          <TableHead className={NUMERIC}>CPU</TableHead>
+          <TableHead className={NUMERIC}>Memory</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {processes.map((process) => (
+          <TableRow key={process.pid}>
+            <TableHead>{process.name}</TableHead>
+            <TableCell className={NUMERIC}>{process.pid}</TableCell>
+            <TableCell className="text-muted-foreground">{process.user ?? '—'}</TableCell>
+            <TableCell className={NUMERIC}>{formatPercent(process.cpuPercent)}</TableCell>
+            <TableCell className={NUMERIC}>
+              {formatBytes(process.memoryBytes)} ({formatPercent(process.memoryPercent)})
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+/**
+ * Writes a load figure beside the core count it is judged against.
+ *
+ * @param load - The load average.
+ * @param coreCount - The host's logical cores, when known.
+ * @returns For example `"1.20 over 8 cores"`.
+ */
+export function describeLoad(load: number | null, coreCount: number | null): string {
+  return coreCount === null ? formatFigure(load) : `${formatFigure(load)} over ${coreCount} cores`;
+}

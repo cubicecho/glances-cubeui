@@ -1,0 +1,34 @@
+@import "tailwindcss";
+@import "../../cubeui-tokens.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Chart series colours: the one part of the palette cubeui does not ship. */
+:root {
+  --chart-cpu: #2f6fd0;
+  --chart-memory: #b8551f;
+  --chart-received: #148a61;
+  --chart-sent: #a86f00;
+  /* The usage scale: usageColor() blends between the two stops a share falls between. */
+  --usage-0: #148a61;
+  --usage-25: #5c9a1a;
+  --usage-50: #c08a00;
+  --usage-100: #cf2f24;
+}
+
+.dark {
+  --chart-cpu: #3987e5;
+  --chart-memory: #d95926;
+  --chart-received: #199e70;
+  --chart-sent: #c98500;
+  --usage-0: #1fa97a;
+  --usage-25: #7cb82f;
+  --usage-50: #e0a800;
+  --usage-100: #f0524a;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
