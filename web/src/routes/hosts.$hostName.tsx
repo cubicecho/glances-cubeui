@@ -11,7 +11,7 @@ import { ServerOff } from '@/core/app-icons';
 import { formatBytes, formatPercent, formatRate, formatTime } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
 import { type Host, useHostEverything, useHosts } from '@/hosts/use-live-hosts';
-import { ReadingStats } from '@/readings/reading-stats';
+import { ReadingRings } from '@/readings/reading-rings';
 import {
   ContainerTable,
   describeLoad,
@@ -21,7 +21,7 @@ import {
   ProcessTable,
   SensorTable,
 } from '@/readings/reading-tables';
-import { UsageChart } from '@/readings/usage-chart';
+import { NETWORK_SERIES, USAGE_SERIES, UsageChart } from '@/readings/usage-chart';
 import { useSettings } from '@/settings/use-settings';
 
 export const Route = createFileRoute('/hosts/$hostName')({ component: HostRoute });
@@ -94,6 +94,20 @@ function ShowAllButton({
 }
 
 /**
+ * Says how long a host has been up and how much it is running.
+ *
+ * @param reading - The host's latest reading.
+ * @returns For example `"Up 14 days, 15:54:25 with 1049 processes."`, with only the parts the host reports.
+ */
+function describeRunning(reading: NonNullable<Host['reading']>): string | undefined {
+  const processes = reading.processCount ? `${reading.processCount.total} processes` : null;
+  if (reading.uptime === null) {
+    return processes === null ? undefined : `Running ${processes}.`;
+  }
+  return processes === null ? `Up ${reading.uptime}.` : `Up ${reading.uptime} with ${processes}.`;
+}
+
+/**
  * Everything the page shows about a host that exists.
  *
  * @param props.host - The host to draw.
@@ -118,7 +132,14 @@ function HostReadings({ host }: { host: Host }) {
           }
         />
       ) : null}
-      <ReadingStats reading={reading} />
+      <Section
+        surface="card"
+        title="Now"
+        description={reading ? describeRunning(reading) : undefined}
+        content={
+          reading ? <ReadingRings reading={reading} /> : <EmptyState compact title="No reading from this host yet." />
+        }
+      />
       <div className="grid gap-6 xl:grid-cols-2">
         <Section
           surface="card"
@@ -129,11 +150,8 @@ function HostReadings({ host }: { host: Host }) {
               samples={history}
               percent
               label="CPU and memory use over time"
-              formatValue={(value) => formatPercent(value)}
-              series={[
-                { key: 'cpuPercent', label: 'CPU', color: 'var(--chart-cpu)' },
-                { key: 'memoryPercent', label: 'Memory', color: 'var(--chart-memory)' },
-              ]}
+              formatValue={formatPercent}
+              series={USAGE_SERIES}
             />
           }
         />
@@ -146,10 +164,7 @@ function HostReadings({ host }: { host: Host }) {
               samples={history}
               label="Network traffic over time"
               formatValue={(value) => formatRate(value, byteUnits)}
-              series={[
-                { key: 'receivedBytesPerSecond', label: 'Received', color: 'var(--chart-received)' },
-                { key: 'sentBytesPerSecond', label: 'Sent', color: 'var(--chart-sent)' },
-              ]}
+              series={NETWORK_SERIES}
             />
           }
         />
