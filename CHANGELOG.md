@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/cubicecho/glances-cubeui/compare/v1.2.0...v1.3.0) (2026-10-07)
+
+
+### Features
+
+* chart GPU use and GPU memory on hosts that report them ([8233e80](https://github.com/cubicecho/glances-cubeui/commit/8233e80948449675d0470f09565de98fa4b8413c))
+
 # [1.2.0](https://github.com/cubicecho/glances-cubeui/compare/v1.1.0...v1.2.0) (2026-10-07)
 
 
