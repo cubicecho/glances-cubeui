@@ -3,7 +3,7 @@ import { CardLayout } from '@/components/card-layout';
 import { EmptyState } from '@/components/page';
 import { Button } from '@/components/ui/button';
 import { Server } from '@/core/app-icons';
-import { formatFigure, formatPercent } from '@/core/format';
+import { formatBytesOf, formatFigure, formatPercent } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
 import type { Host } from '@/hosts/use-live-hosts';
 import { Sparkline } from '@/readings/sparkline';
@@ -88,6 +88,7 @@ export function HostCard({ host }: { host: Host }) {
                   percent={reading.memory.percent}
                   value={reading.memory.percent}
                   format={formatPercent}
+                  amount={formatBytesOf(reading.memory.usedBytes, reading.memory.totalBytes)}
                 />
                 {gpuDonuts(reading.gpus)}
                 {reading.load === null ? null : (
