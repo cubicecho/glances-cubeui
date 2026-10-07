@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/cubicecho/glances-cubeui/compare/v1.3.1...v1.4.0) (2026-10-07)
+
+
+### Features
+
+* add a dense view and allow sampling down to half a second ([f5832b2](https://github.com/cubicecho/glances-cubeui/commit/f5832b29fecedf6525eb38c5c3c57c7e31801205))
+
 ## [1.3.1](https://github.com/cubicecho/glances-cubeui/compare/v1.3.0...v1.3.1) (2026-10-07)
 
 
