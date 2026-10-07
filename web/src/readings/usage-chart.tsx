@@ -37,6 +37,7 @@ export const NETWORK_SERIES: ChartSeries[] = [
 
 const Y_AXIS_WIDTH = 84;
 const FILL_OPACITY = 0.15;
+const TOOLTIP_WRAPPER = { zIndex: 1 };
 const FULL_SIZE = 'aspect-auto h-56 w-full';
 const COMPACT_SIZE = 'aspect-auto h-24 w-full';
 const FULL_PERCENT = 100;
@@ -102,7 +103,11 @@ export function UsageChart({
           axisLine={false}
           domain={percent ? PERCENT_DOMAIN : [0, 'auto']}
         />
+        {/* Unsorted, so the legend keeps the order the series are given in rather than the alphabet's. */}
+        <ChartLegend itemSorter={null} content={<ChartLegendContent />} />
+        {/* After the legend and raised, so a tooltip near the bottom of the plot is drawn over the legend. */}
         <ChartTooltip
+          wrapperStyle={TOOLTIP_WRAPPER}
           content={
             <ChartTooltipContent
               labelFormatter={(value) => formatTime(String(value))}
@@ -110,8 +115,6 @@ export function UsageChart({
             />
           }
         />
-        {/* Unsorted, so the legend keeps the order the series are given in rather than the alphabet's. */}
-        <ChartLegend itemSorter={null} content={<ChartLegendContent />} />
         {series.map(({ key }) => (
           <Area
             key={key}
