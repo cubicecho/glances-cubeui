@@ -21,7 +21,7 @@ import {
   ProcessTable,
   SensorTable,
 } from '@/readings/reading-tables';
-import { NETWORK_SERIES, USAGE_SERIES, UsageChart } from '@/readings/usage-chart';
+import { NETWORK_SERIES, UsageChart, usageSeries } from '@/readings/usage-chart';
 import { useSettings } from '@/settings/use-settings';
 
 export const Route = createFileRoute('/hosts/$hostName')({ component: HostRoute });
@@ -143,15 +143,15 @@ function HostReadings({ host }: { host: Host }) {
       <div className="grid gap-6 xl:grid-cols-2">
         <Section
           surface="card"
-          title="CPU and memory"
+          title="Usage"
           description="Share in use over the kept history."
           content={
             <UsageChart
               samples={history}
               percent
-              label="CPU and memory use over time"
+              label="Share in use over time"
               formatValue={formatPercent}
-              series={USAGE_SERIES}
+              series={usageSeries(history)}
             />
           }
         />

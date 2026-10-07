@@ -7,11 +7,11 @@ import { formatPercent } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
 import type { Host } from '@/hosts/use-live-hosts';
 import { ReadingRings } from '@/readings/reading-rings';
-import { USAGE_SERIES, UsageChart } from '@/readings/usage-chart';
+import { UsageChart, usageSeries } from '@/readings/usage-chart';
 
 const ButtonLink = createLink(Button);
 /**
- * One host on the overview: its status, a ring per headline figure (GPUs included) and the CPU and memory trend.
+ * One host on the overview: its status, a ring per headline figure (GPUs included) and the trend of the same shares.
  *
  * @param props.host - The host to summarise.
  */
@@ -37,9 +37,9 @@ export function HostCard({ host }: { host: Host }) {
                 compact
                 percent
                 samples={host.history}
-                series={USAGE_SERIES}
+                series={usageSeries(host.history)}
                 formatValue={formatPercent}
-                label={`${host.name} CPU and memory use over time`}
+                label={`${host.name} use over time`}
               />,
             ]
       }

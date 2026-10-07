@@ -20,9 +20,14 @@ export interface ChartSeries {
 }
 
 /** CPU and memory in use, the trend every host is drawn with. */
-export const USAGE_SERIES: ChartSeries[] = [
+const USAGE_SERIES: ChartSeries[] = [
   { key: 'cpuPercent', label: 'CPU', color: 'var(--chart-cpu)' },
   { key: 'memoryPercent', label: 'Memory', color: 'var(--chart-memory)' },
+];
+/** Graphics card use and memory, drawn for a host whose cards report them. */
+const GPU_SERIES: ChartSeries[] = [
+  { key: 'gpuPercent', label: 'GPU', color: 'var(--chart-gpu)' },
+  { key: 'gpuMemoryPercent', label: 'GPU memory', color: 'var(--chart-gpu-memory)' },
 ];
 /** Traffic over the physical interfaces. */
 export const NETWORK_SERIES: ChartSeries[] = [
@@ -36,6 +41,17 @@ const FULL_SIZE = 'aspect-auto h-56 w-full';
 const COMPACT_SIZE = 'aspect-auto h-24 w-full';
 const FULL_PERCENT = 100;
 const PERCENT_DOMAIN: [number, number] = [0, FULL_PERCENT];
+
+/**
+ * Picks the shares in use a host's trend draws.
+ *
+ * @param samples - The host's history.
+ * @returns CPU and memory, then each graphics figure any sample reports.
+ */
+export function usageSeries(samples: readonly Sample[]): ChartSeries[] {
+  const reported = GPU_SERIES.filter(({ key }) => samples.some((sample) => sample[key] !== null));
+  return [...USAGE_SERIES, ...reported];
+}
 
 /**
  * A host's recent samples as an area chart over time, with a legend naming each line.
@@ -94,7 +110,8 @@ export function UsageChart({
             />
           }
         />
-        <ChartLegend content={<ChartLegendContent />} />
+        {/* Unsorted, so the legend keeps the order the series are given in rather than the alphabet's. */}
+        <ChartLegend itemSorter={null} content={<ChartLegendContent />} />
         {series.map(({ key }) => (
           <Area
             key={key}

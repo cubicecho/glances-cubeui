@@ -7,6 +7,8 @@
 :root {
   --chart-cpu: #2f6fd0;
   --chart-memory: #b8551f;
+  --chart-gpu: #7a4fc4;
+  --chart-gpu-memory: #b83a8c;
   --chart-received: #148a61;
   --chart-sent: #a86f00;
   /* The usage scale: usageColor() blends between the two stops a share falls between. */
@@ -19,6 +21,8 @@
 .dark {
   --chart-cpu: #3987e5;
   --chart-memory: #d95926;
+  --chart-gpu: #9a78e6;
+  --chart-gpu-memory: #dc62b0;
   --chart-received: #199e70;
   --chart-sent: #c98500;
   --usage-0: #1fa97a;
