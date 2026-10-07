@@ -1,3 +1,12 @@
+# [1.2.0](https://github.com/cubicecho/glances-cubeui/compare/v1.1.0...v1.2.0) (2026-10-07)
+
+
+### Features
+
+* add detail levels for filesystems, interfaces and disks ([ccb981a](https://github.com/cubicecho/glances-cubeui/commit/ccb981a1aa49ef215a4519824b8f403c723f692c))
+* add per-browser settings and an update interval ([e18530b](https://github.com/cubicecho/glances-cubeui/commit/e18530bcff33ed1ee95d637ab9575144e077d05d))
+* pick a detail level and hide OS storage in settings ([d08b7cb](https://github.com/cubicecho/glances-cubeui/commit/d08b7cb506d61c3e779b90fdd16c96a41eb04778))
+
 # [1.1.0](https://github.com/cubicecho/glances-cubeui/compare/v1.0.1...v1.1.0) (2026-10-07)
 
 
