@@ -26,6 +26,28 @@ export function formatBytes(bytes: number | null): string {
 }
 
 /**
+ * Writes how much of a byte total is in use, both figures in the total's unit so they compare at a glance.
+ *
+ * @param usedBytes - The part in use.
+ * @param totalBytes - The whole.
+ * @returns For example `"31.2/62.7 GiB"`.
+ */
+export function formatBytesOf(usedBytes: number, totalBytes: number): string {
+  let divisor = 1;
+  let unit = 0;
+  while (totalBytes / divisor >= BYTES_PER_UNIT && unit < BYTE_UNITS.length - 1) {
+    divisor *= BYTES_PER_UNIT;
+    unit += 1;
+  }
+  const scale = (bytes: number): string => {
+    const value = Math.max(bytes, 0) / divisor;
+    const digits = unit === 0 || value >= WHOLE_NUMBER_FROM ? 0 : 1;
+    return value.toFixed(digits);
+  };
+  return `${scale(usedBytes)}/${scale(totalBytes)} ${BYTE_UNITS[unit]}`;
+}
+
+/**
  * Writes a transfer rate.
  *
  * @param bytesPerSecond - The rate, or `null` when unknown.
