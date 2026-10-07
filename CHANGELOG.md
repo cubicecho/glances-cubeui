@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/cubicecho/glances-cubeui/compare/v1.0.1...v1.1.0) (2026-10-07)
+
+
+### Features
+
+* **web:** show used and total memory inside the memory ring ([af71d48](https://github.com/cubicecho/glances-cubeui/commit/af71d4875c345faf85f343e75e4cddf709cd2d78))
+
 ## [1.0.1](https://github.com/cubicecho/glances-cubeui/compare/v1.0.0...v1.0.1) (2026-10-07)
 
 
