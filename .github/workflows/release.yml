@@ -50,7 +50,7 @@ jobs:
           node-version: 26
 
       - name: Install semantic-release
-        run: npm install -g semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/changelog @semantic-release/git @semantic-release/github
+        run: npm install -g semantic-release @semantic-release/commit-analyzer @semantic-release/release-notes-generator @semantic-release/changelog @semantic-release/npm @semantic-release/git @semantic-release/github
 
       # A dry run first, because most pushes to main release nothing — a docs
       # commit or a refactor analyses to no version bump — and the image steps
@@ -97,6 +97,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # `latest` as well as the version, because that is the tag docker-compose.yml pulls.
+      # Built from this checkout, where semantic-release has just written the version
+      # into package.json, which is what /healthz reports.
       - name: Build and push
         if: steps.release.outputs.released == 'true'
         uses: docker/build-push-action@v7
