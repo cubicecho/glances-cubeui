@@ -6,3 +6,6 @@ web/src/__generated__
 web/src/route-tree.gen.ts
 .env
 *.local
+
+# Claude Code worktrees and local state
+.claude/
