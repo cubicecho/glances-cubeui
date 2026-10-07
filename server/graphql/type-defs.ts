@@ -40,6 +40,16 @@ export const TYPE_DEFS = /* GraphQL */ `
     sentBytesPerSecond: Float!
   }
 
+  "How much of a host's filesystems, interfaces and disks to return."
+  enum DetailLevel {
+    "Storage pools, physical interfaces and whole disks."
+    SUMMARY
+    "Adds each filesystem, virtual interface and software disk, without what a container engine made."
+    USEFUL
+    "Everything Glances reports."
+    ALL
+  }
+
   "Everything one Glances server reported at one moment."
   type Reading {
     "When the reading was taken, as an ISO timestamp."
@@ -60,12 +70,20 @@ export const TYPE_DEFS = /* GraphQL */ `
     memory: MemoryUsage!
     "Swap use. Null when the machine reports none."
     swap: SwapUsage
-    "Mounted filesystems."
-    filesystems: [Filesystem!]!
+    "Mounted filesystems, without Docker's file mounts, at their paths on the host. SUMMARY totals each pool."
+    filesystems(
+      detail: DetailLevel! = ALL
+      "Leaves out what the operating system boots from and keeps for itself."
+      hideSystem: Boolean! = false
+    ): [Filesystem!]!
+    "How many filesystems there are at ALL."
+    filesystemCount: Int!
     "Network interfaces and their traffic."
-    networkInterfaces: [NetworkInterface!]!
+    networkInterfaces(detail: DetailLevel! = ALL): [NetworkInterface!]!
+    "How many network interfaces there are at ALL."
+    networkInterfaceCount: Int!
     "Disks and their traffic."
-    disks: [Disk!]!
+    disks(detail: DetailLevel! = ALL): [Disk!]!
     "Hardware sensors. Empty where the machine exposes none."
     sensors: [Sensor!]!
     "Graphics cards. Empty where Glances found none it can read."
@@ -164,6 +182,8 @@ export const TYPE_DEFS = /* GraphQL */ `
     freeBytes: Float!
     "Space in use, in percent."
     percent: Float!
+    "The filesystems a SUMMARY row totals that the view shows, when there is more than one. Empty on any other row."
+    datasets: [Filesystem!]!
   }
 
   "One network interface's traffic."

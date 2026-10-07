@@ -62,6 +62,25 @@ describe('app', () => {
     ]);
   });
 
+  it('narrows a reading to the detail asked for', async () => {
+    const query = `{ host(name: "nas") { reading {
+      filesystemCount networkInterfaceCount
+      filesystems(detail: SUMMARY, hideSystem: true) { mountPoint datasets { mountPoint } }
+      networkInterfaces(detail: SUMMARY) { name }
+      every: networkInterfaces { name }
+      disks(detail: SUMMARY) { name }
+    } } }`;
+    const { data } = await (await post({ query })).json();
+    expect(data.host.reading).toEqual({
+      filesystemCount: 1,
+      networkInterfaceCount: 2,
+      filesystems: [{ mountPoint: '/etc/resolv.conf', datasets: [] }],
+      networkInterfaces: [{ name: 'eth0' }],
+      every: [{ name: 'lo' }, { name: 'eth0' }],
+      disks: [{ name: 'sda' }],
+    });
+  });
+
   it('answers an unknown host name with NOT_FOUND', async () => {
     const { errors } = await (await post({ query: '{ host(name: "nope") { name } }' })).json();
     expect(errors[0].extensions.code).toBe(ErrorCode.NotFound);

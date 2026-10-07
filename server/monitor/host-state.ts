@@ -1,4 +1,5 @@
 import type { Reading } from '../glances/reading.ts';
+import { uplinkInterfaces } from '../glances/traffic-view.ts';
 
 /** Whether a host is answering. */
 export const HostStatus = {
@@ -19,9 +20,9 @@ export interface Sample {
   memoryPercent: number;
   /** One-minute load average, or null where the machine has none. */
   load1: number | null;
-  /** Received on every interface but loopback, in bytes per second. */
+  /** Received on the physical interfaces, in bytes per second. */
   receivedBytesPerSecond: number;
-  /** Sent on every interface but loopback, in bytes per second. */
+  /** Sent on the physical interfaces, in bytes per second. */
   sentBytesPerSecond: number;
 }
 
@@ -37,9 +38,6 @@ export interface HostState {
   history: readonly Sample[];
 }
 
-/** The loopback interface, whose traffic never leaves the machine. */
-const LOOPBACK_INTERFACE = 'lo';
-
 /**
  * Reduces a reading to the numbers charted over time.
  *
@@ -47,7 +45,7 @@ const LOOPBACK_INTERFACE = 'lo';
  * @returns Its sample.
  */
 export function sampleOf(reading: Reading): Sample {
-  const external = reading.networkInterfaces.filter((network) => network.name !== LOOPBACK_INTERFACE);
+  const external = uplinkInterfaces(reading.networkInterfaces);
   return {
     sampledAt: reading.sampledAt,
     cpuPercent: reading.cpu.totalPercent,

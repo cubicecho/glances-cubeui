@@ -2,6 +2,10 @@ import type { GraphQLSchema } from 'graphql';
 import { createSchema } from 'graphql-yoga';
 import type { Context } from '../core/context.ts';
 import { notFound } from '../core/errors.ts';
+import type { DetailLevel } from '../glances/detail-level.ts';
+import { type FilesystemRow, tidyFilesystems, viewFilesystems } from '../glances/filesystem-view.ts';
+import type { Disk, NetworkInterface, Reading } from '../glances/reading.ts';
+import { viewDisks, viewInterfaces } from '../glances/traffic-view.ts';
 import type { HostState } from '../monitor/host-state.ts';
 import { TYPE_DEFS } from './type-defs.ts';
 
@@ -13,6 +17,16 @@ interface HostArgs {
 /** Arguments of `Subscription.hostChanged`. */
 interface HostChangedArgs {
   name?: string | null;
+}
+
+/** Arguments of the `Reading` fields that take a detail level. */
+interface DetailArgs {
+  detail: DetailLevel;
+}
+
+/** Arguments of `Reading.filesystems`. */
+interface FilesystemArgs extends DetailArgs {
+  hideSystem: boolean;
 }
 
 /**
@@ -55,6 +69,48 @@ const resolvers = {
      * @returns The host's state.
      */
     host: (_parent: unknown, args: HostArgs, ctx: Context): HostState => loadHost(ctx, args.name),
+  },
+  Reading: {
+    /**
+     * Resolves `Reading.filesystems`.
+     *
+     * @param reading - The reading.
+     * @param args - How much to show, and whether system storage is hidden.
+     * @returns The rows of that view.
+     */
+    filesystems: (reading: Reading, args: FilesystemArgs): FilesystemRow[] =>
+      viewFilesystems(reading.filesystems, args),
+    /**
+     * Resolves `Reading.filesystemCount`.
+     *
+     * @param reading - The reading.
+     * @returns How many filesystems the fullest view has.
+     */
+    filesystemCount: (reading: Reading): number => tidyFilesystems(reading.filesystems).length,
+    /**
+     * Resolves `Reading.networkInterfaces`.
+     *
+     * @param reading - The reading.
+     * @param args - How much to show.
+     * @returns The interfaces of that view.
+     */
+    networkInterfaces: (reading: Reading, args: DetailArgs): NetworkInterface[] =>
+      viewInterfaces(reading.networkInterfaces, args.detail),
+    /**
+     * Resolves `Reading.networkInterfaceCount`.
+     *
+     * @param reading - The reading.
+     * @returns How many interfaces the fullest view has.
+     */
+    networkInterfaceCount: (reading: Reading): number => reading.networkInterfaces.length,
+    /**
+     * Resolves `Reading.disks`.
+     *
+     * @param reading - The reading.
+     * @param args - How much to show.
+     * @returns The disks of that view.
+     */
+    disks: (reading: Reading, args: DetailArgs): Disk[] => viewDisks(reading.disks, args.detail),
   },
   Subscription: {
     hostChanged: {
