@@ -265,10 +265,16 @@ export const TYPE_DEFS = /* GraphQL */ `
     hosts: [Host!]!
     "One host by name. Fails with NOT_FOUND when no host has that name."
     host(name: String!): Host!
+    "How often every host is sampled, in seconds. Updates cannot arrive faster than this."
+    sampleIntervalSeconds: Float!
   }
 
   type Subscription {
-    "Follows hosts as they are sampled: one event per host per sample. Pass a name to follow one host."
-    hostChanged(name: String): Host!
+    """
+    Follows hosts as they are sampled: one event per host per sample. Pass a name to follow one host.
+    Pass intervalSeconds to hear of each host about that often instead: it is raised to the sample
+    interval and capped at an hour, and a host going online or unreachable is still sent at once.
+    """
+    hostChanged(name: String, intervalSeconds: Float): Host!
   }
 `;

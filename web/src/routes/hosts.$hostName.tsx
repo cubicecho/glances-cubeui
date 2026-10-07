@@ -20,6 +20,7 @@ import {
   SensorTable,
 } from '@/readings/reading-tables';
 import { UsageChart } from '@/readings/usage-chart';
+import { useSettings } from '@/settings/use-settings';
 
 export const Route = createFileRoute('/hosts/$hostName')({ component: HostRoute });
 
@@ -66,6 +67,7 @@ function HostRoute() {
  */
 function HostReadings({ host }: { host: Host }) {
   const { reading, history } = host;
+  const [{ byteUnits }] = useSettings();
 
   return (
     <>
@@ -107,7 +109,7 @@ function HostReadings({ host }: { host: Host }) {
             <UsageChart
               samples={history}
               label="Network traffic over time"
-              formatValue={(value) => formatRate(value)}
+              formatValue={(value) => formatRate(value, byteUnits)}
               series={[
                 { key: 'receivedBytesPerSecond', label: 'Received', color: 'var(--chart-received)' },
                 { key: 'sentBytesPerSecond', label: 'Sent', color: 'var(--chart-sent)' },
@@ -157,7 +159,7 @@ function HostReadings({ host }: { host: Host }) {
                     label="Swap"
                     value={
                       reading.swap
-                        ? `${formatBytes(reading.swap.usedBytes)} of ${formatBytes(reading.swap.totalBytes)}`
+                        ? `${formatBytes(reading.swap.usedBytes, byteUnits)} of ${formatBytes(reading.swap.totalBytes, byteUnits)}`
                         : '—'
                     }
                   />,

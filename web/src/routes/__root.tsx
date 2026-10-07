@@ -4,6 +4,7 @@ import { QueryState } from '@/components/query-state';
 import { RouteError } from '@/components/route-error';
 import { BarNavItem, Sidebar, SidebarNavItem, SidebarSection } from '@/components/sidebar';
 import { SidebarLayout } from '@/components/split-layout';
+import { Settings } from '@/components/ui/icons';
 import { ThemePicker } from '@/components/ui/theme-picker';
 import { useThemePreference } from '@/components/ui/theme-preference';
 import { Activity, LayoutDashboard, Server, ServerOff } from '@/core/app-icons';
@@ -12,6 +13,7 @@ import { type Host, useHosts, useHostsSubscription } from '@/hosts/use-live-host
 
 const SidebarLink = createLink(SidebarNavItem);
 const BarLink = createLink(BarNavItem);
+const SETTINGS_PATH = '/settings';
 
 export const Route = createRootRoute({
   component: RootRoute,
@@ -53,6 +55,7 @@ function RootRoute() {
   const hosts = query.data ?? [];
   const { hostName } = useParams({ strict: false });
   const isOverview = useRouterState({ select: (state) => state.location.pathname === '/' });
+  const isSettings = useRouterState({ select: (state) => state.location.pathname === SETTINGS_PATH });
 
   return (
     <SidebarLayout
@@ -80,6 +83,7 @@ function RootRoute() {
             active={host.name === hostName}
           />
         )),
+        <BarLink key="settings" to={SETTINGS_PATH} label="Settings" icon={<Settings />} active={isSettings} />,
       ]}
       sidebar={
         <Sidebar
@@ -120,7 +124,12 @@ function RootRoute() {
               />
             </>
           }
-          footer={<ThemePicker variant="compact" />}
+          footer={
+            <>
+              <SidebarLink to={SETTINGS_PATH} label="Settings" icon={<Settings />} active={isSettings} />
+              <ThemePicker variant="compact" />
+            </>
+          }
         />
       }
       content={<Outlet />}

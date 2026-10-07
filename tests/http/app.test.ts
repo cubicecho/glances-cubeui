@@ -1,7 +1,8 @@
 import type { Server } from 'node:http';
-import { OPERATION_LIMIT_DEFAULTS } from '../../server/core/defaults.ts';
+import { OPERATION_LIMIT_DEFAULTS, SAMPLER_DEFAULTS } from '../../server/core/defaults.ts';
 import { ErrorCode } from '../../server/core/errors.ts';
 import { HttpStatus } from '../../server/core/wire.ts';
+import type { GlancesClient } from '../../server/glances/client.ts';
 import { createApp } from '../../server/http/app.ts';
 import { createHostBus, type HostBus } from '../../server/monitor/host-bus.ts';
 import { HostStatus } from '../../server/monitor/host-state.ts';
@@ -85,6 +86,35 @@ describe('app', () => {
     controller.abort();
     expect(received).toContain('event: next');
     expect(received).toContain(`{"data":{"hostChanged":{"name":"nas","status":"${HostStatus.Online}"}}}`);
+  });
+
+  it('says how often hosts are sampled', async () => {
+    const { data } = await (await post({ query: '{ sampleIntervalSeconds }' })).json();
+    expect(data.sampleIntervalSeconds).toBe(SAMPLER_DEFAULTS.intervalSeconds);
+  });
+
+  it('holds back samples from a subscriber that asked for a slower interval, but not a change of status', async () => {
+    const query = encodeURIComponent('subscription { hostChanged(name: "nas", intervalSeconds: 60) { status } }');
+    const controller = new AbortController();
+    const response = await fetch(`${base}/graphql?query=${query}`, {
+      headers: { accept: 'text/event-stream' },
+      signal: controller.signal,
+    });
+    const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
+    let received = '';
+    const sampleUntilReceived = async (client: GlancesClient, status: HostStatus): Promise<void> => {
+      while (received.includes(status) === false) {
+        await sampleHost({ client, store, bus }, hostNamed('nas'));
+        received += (await reader?.read())?.value ?? '';
+      }
+    };
+    await sampleUntilReceived(createFakeClient(), HostStatus.Online);
+    // Well inside the minute: these are dropped, and the failure after them is not.
+    await sampleHost({ client: createFakeClient(), store, bus }, hostNamed('nas'));
+    await sampleHost({ client: createFakeClient(), store, bus }, hostNamed('nas'));
+    await sampleUntilReceived(createFakeClient({ nas: 'connect ECONNREFUSED' }), HostStatus.Unreachable);
+    controller.abort();
+    expect(received.match(/event: next/g)).toHaveLength(2);
   });
 
   it('refuses a document with more aliases than maxAliases', async () => {
