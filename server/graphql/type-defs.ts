@@ -34,9 +34,13 @@ export const TYPE_DEFS = /* GraphQL */ `
     memoryPercent: Float!
     "One-minute load average. Null where the machine has none."
     load1: Float
-    "Received on every interface but loopback, in bytes per second."
+    "How busy the graphics cards are, in percent, averaged over those that say. Null where none does."
+    gpuPercent: Float
+    "Graphics memory in use, in percent, averaged over the cards that say. Null where none does."
+    gpuMemoryPercent: Float
+    "Received on the physical interfaces, in bytes per second."
     receivedBytesPerSecond: Float!
-    "Sent on every interface but loopback, in bytes per second."
+    "Sent on the physical interfaces, in bytes per second."
     sentBytesPerSecond: Float!
   }
 

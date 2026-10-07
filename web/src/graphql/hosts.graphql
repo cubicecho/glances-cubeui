@@ -29,6 +29,8 @@ fragment HostFields on Host {
     cpuPercent
     memoryPercent
     load1
+    gpuPercent
+    gpuMemoryPercent
     receivedBytesPerSecond
     sentBytesPerSecond
   }
