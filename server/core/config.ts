@@ -1,6 +1,6 @@
 // Getters, not constants, so a test sees the current environment.
 import { createRequire } from 'node:module';
-import { HTTP_DEFAULTS } from './defaults.ts';
+import { HTTP_DEFAULTS, SAMPLER_DEFAULTS } from './defaults.ts';
 
 const NODE_ENV_PRODUCTION = 'production';
 /** The TRUST_PROXY value that trusts no hop. */
@@ -42,6 +42,28 @@ export const isProduction = (): boolean => process.env.NODE_ENV === NODE_ENV_PRO
  * @returns `GLANCES_HOSTS`, or an empty string when unset.
  */
 export const glancesHosts = (): string => process.env.GLANCES_HOSTS ?? '';
+
+/**
+ * How often every host is sampled, in seconds.
+ *
+ * @returns `SAMPLE_INTERVAL_SECONDS`, or `SAMPLER_DEFAULTS.intervalSeconds` when unset.
+ * @throws When it is set to anything but a number of seconds within the sampler's bounds.
+ */
+export const sampleIntervalSeconds = (): number => {
+  const raw = (process.env.SAMPLE_INTERVAL_SECONDS ?? '').trim();
+  if (raw === '') {
+    return SAMPLER_DEFAULTS.intervalSeconds;
+  }
+  const { minIntervalSeconds, maxIntervalSeconds } = SAMPLER_DEFAULTS;
+  const seconds = Number(raw);
+  const isWithinBounds = seconds >= minIntervalSeconds && seconds <= maxIntervalSeconds;
+  if (isWithinBounds === false) {
+    throw new Error(
+      `SAMPLE_INTERVAL_SECONDS is "${raw}". Expected a number of seconds from ${minIntervalSeconds} to ${maxIntervalSeconds}, for example SAMPLE_INTERVAL_SECONDS=5.`,
+    );
+  }
+  return seconds;
+};
 
 /**
  * Express `trust proxy`: which hops may set X-Forwarded-For.

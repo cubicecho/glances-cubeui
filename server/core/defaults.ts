@@ -41,8 +41,12 @@ export const OPERATION_LIMIT_DEFAULTS: Readonly<OperationLimitSettings> = Object
 
 /** How Glances hosts are sampled and how much is remembered. */
 export interface SamplerSettings {
-  /** Time between two samples of a host, in seconds. */
+  /** Time between two samples of a host, in seconds. `SAMPLE_INTERVAL_SECONDS` overrides it. */
   intervalSeconds: number;
+  /** Shortest interval `SAMPLE_INTERVAL_SECONDS` may ask for, in seconds. */
+  minIntervalSeconds: number;
+  /** Longest interval `SAMPLE_INTERVAL_SECONDS` may ask for, in seconds. */
+  maxIntervalSeconds: number;
   /** How long one Glances request may take, in seconds. */
   requestTimeoutSeconds: number;
   /** How many samples are kept per host. At the default interval this is ten minutes. */
@@ -53,7 +57,25 @@ export interface SamplerSettings {
 
 export const SAMPLER_DEFAULTS: Readonly<SamplerSettings> = Object.freeze({
   intervalSeconds: 3,
+  minIntervalSeconds: 1,
+  maxIntervalSeconds: 300,
   requestTimeoutSeconds: 5,
   historySampleCount: 200,
   topProcessCount: 15,
+});
+
+/** How a subscriber's own update interval is honoured. */
+export interface PacingSettings {
+  /** Longest update interval a subscriber may ask for, in seconds. */
+  maxIntervalSeconds: number;
+  /**
+   * How early an update may go out, as a share of the sampler interval. Samples only arrive on the
+   * sampler's beat, so at 0.5 an update goes out with the sample nearest its due time.
+   */
+  earlySampleShare: number;
+}
+
+export const PACING_DEFAULTS: Readonly<PacingSettings> = Object.freeze({
+  maxIntervalSeconds: 3600,
+  earlySampleShare: 0.5,
 });

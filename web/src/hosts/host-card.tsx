@@ -8,6 +8,7 @@ import { HostStatusBadge } from '@/hosts/host-status-badge';
 import type { Host } from '@/hosts/use-live-hosts';
 import { Sparkline } from '@/readings/sparkline';
 import { UsageDonut } from '@/readings/usage-donut';
+import { useSettings } from '@/settings/use-settings';
 
 const ButtonLink = createLink(Button);
 const FULL_PERCENT = 100;
@@ -61,6 +62,7 @@ function gpuDonuts(gpus: Reading['gpus']) {
  */
 export function HostCard({ host }: { host: Host }) {
   const { reading } = host;
+  const [{ byteUnits }] = useSettings();
   const cpu = formatPercent(reading?.cpu.totalPercent ?? null);
 
   return (
@@ -88,7 +90,7 @@ export function HostCard({ host }: { host: Host }) {
                   percent={reading.memory.percent}
                   value={reading.memory.percent}
                   format={formatPercent}
-                  amount={formatBytesOf(reading.memory.usedBytes, reading.memory.totalBytes)}
+                  amount={formatBytesOf(reading.memory.usedBytes, reading.memory.totalBytes, byteUnits)}
                 />
                 {gpuDonuts(reading.gpus)}
                 {reading.load === null ? null : (

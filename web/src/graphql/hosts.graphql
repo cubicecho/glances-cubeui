@@ -102,8 +102,12 @@ query Hosts {
   }
 }
 
-subscription HostChanged {
-  hostChanged {
+query SampleInterval {
+  sampleIntervalSeconds
+}
+
+subscription HostChanged($intervalSeconds: Float) {
+  hostChanged(intervalSeconds: $intervalSeconds) {
     ...HostFields
   }
 }

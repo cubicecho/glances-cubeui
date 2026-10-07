@@ -1,12 +1,37 @@
 import { EmptyState } from '@/components/page';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatBytes, formatFigure, formatPercent, formatRate } from '@/core/format';
+import { formatBytes, formatFigure, formatPercent, formatRate, formatTemperature } from '@/core/format';
 import type { Host } from '@/hosts/use-live-hosts';
 import { UsageBar } from '@/readings/usage-bar';
+import { TEMPERATURE_UNIT_CELSIUS, TEMPERATURE_UNIT_FAHRENHEIT, type TemperatureUnit } from '@/settings/defaults';
+import { useSettings } from '@/settings/use-settings';
 
 type Reading = NonNullable<Host['reading']>;
 
 const NUMERIC = 'text-right tabular-nums';
+/** The sensor units Glances reports that are temperatures. Fan speeds (R) and shares (%) are not. */
+const TEMPERATURE_UNITS_BY_GLANCES_UNIT: Partial<Record<string, TemperatureUnit>> = {
+  C: TEMPERATURE_UNIT_CELSIUS,
+  F: TEMPERATURE_UNIT_FAHRENHEIT,
+};
+
+/**
+ * Writes a sensor's value: a temperature in the reader's unit, anything else as Glances gave it.
+ *
+ * @param sensor - The sensor.
+ * @param temperatureUnit - The unit the reader chose for temperatures.
+ * @returns For example `"45 °C"` or `"1200 R"`, or an em dash when the sensor has no value.
+ */
+function sensorValue(sensor: Reading['sensors'][number], temperatureUnit: TemperatureUnit): string {
+  if (sensor.value === null) {
+    return '—';
+  }
+  const reportedIn = TEMPERATURE_UNITS_BY_GLANCES_UNIT[sensor.unit ?? ''];
+  if (reportedIn === undefined) {
+    return `${sensor.value} ${sensor.unit ?? ''}`.trim();
+  }
+  return formatTemperature(sensor.value, reportedIn, temperatureUnit);
+}
 
 /**
  * Mounted filesystems with how full each is.
@@ -14,6 +39,7 @@ const NUMERIC = 'text-right tabular-nums';
  * @param props.filesystems - The reading's filesystems.
  */
 export function FilesystemTable({ filesystems }: { filesystems: Reading['filesystems'] }) {
+  const [{ byteUnits }] = useSettings();
   if (filesystems.length === 0) {
     return <EmptyState compact title="No filesystems reported." />;
   }
@@ -42,9 +68,9 @@ export function FilesystemTable({ filesystems }: { filesystems: Reading['filesys
               />
             </TableCell>
             <TableCell className={NUMERIC}>
-              {formatBytes(filesystem.usedBytes)} ({formatPercent(filesystem.percent)})
+              {formatBytes(filesystem.usedBytes, byteUnits)} ({formatPercent(filesystem.percent)})
             </TableCell>
-            <TableCell className={NUMERIC}>{formatBytes(filesystem.sizeBytes)}</TableCell>
+            <TableCell className={NUMERIC}>{formatBytes(filesystem.sizeBytes, byteUnits)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -70,6 +96,7 @@ function busiestFirst(interfaces: Reading['networkInterfaces']): Reading['networ
  * @param props.interfaces - The reading's network interfaces.
  */
 export function NetworkTable({ interfaces }: { interfaces: Reading['networkInterfaces'] }) {
+  const [{ byteUnits }] = useSettings();
   if (interfaces.length === 0) {
     return <EmptyState compact title="No network interfaces reported." />;
   }
@@ -87,8 +114,8 @@ export function NetworkTable({ interfaces }: { interfaces: Reading['networkInter
         {busiestFirst(interfaces).map((networkInterface) => (
           <TableRow key={networkInterface.name}>
             <TableHead>{networkInterface.name}</TableHead>
-            <TableCell className={NUMERIC}>{formatRate(networkInterface.receivedBytesPerSecond)}</TableCell>
-            <TableCell className={NUMERIC}>{formatRate(networkInterface.sentBytesPerSecond)}</TableCell>
+            <TableCell className={NUMERIC}>{formatRate(networkInterface.receivedBytesPerSecond, byteUnits)}</TableCell>
+            <TableCell className={NUMERIC}>{formatRate(networkInterface.sentBytesPerSecond, byteUnits)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -102,6 +129,7 @@ export function NetworkTable({ interfaces }: { interfaces: Reading['networkInter
  * @param props.sensors - The reading's sensors.
  */
 export function SensorTable({ sensors }: { sensors: Reading['sensors'] }) {
+  const [{ temperatureUnit }] = useSettings();
   if (sensors.length === 0) {
     return <EmptyState compact title="This host reports no sensors." />;
   }
@@ -121,9 +149,7 @@ export function SensorTable({ sensors }: { sensors: Reading['sensors'] }) {
           <TableRow key={`${sensor.label}-${index}`}>
             <TableHead>{sensor.label}</TableHead>
             <TableCell className="text-muted-foreground">{sensor.kind ?? '—'}</TableCell>
-            <TableCell className={NUMERIC}>
-              {sensor.value === null ? '—' : `${sensor.value} ${sensor.unit ?? ''}`.trim()}
-            </TableCell>
+            <TableCell className={NUMERIC}>{sensorValue(sensor, temperatureUnit)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -158,6 +184,7 @@ function ShareBar({ percent, label }: { percent: number | null; label: string })
  * Glances reports GPU memory as a share only, so there is no byte figure to show.
  */
 export function GpuTable({ gpus }: { gpus: Reading['gpus'] }) {
+  const [{ temperatureUnit }] = useSettings();
   return (
     <Table>
       <TableCaption className="sr-only">Graphics cards</TableCaption>
@@ -182,7 +209,9 @@ export function GpuTable({ gpus }: { gpus: Reading['gpus'] }) {
             <TableCell>
               <ShareBar percent={gpu.memoryPercent} label={`${gpu.id} memory used`} />
             </TableCell>
-            <TableCell className={NUMERIC}>{gpu.temperature === null ? '—' : `${gpu.temperature} °C`}</TableCell>
+            <TableCell className={NUMERIC}>
+              {formatTemperature(gpu.temperature, TEMPERATURE_UNIT_CELSIUS, temperatureUnit)}
+            </TableCell>
             <TableCell className={NUMERIC}>{formatPercent(gpu.fanSpeedPercent)}</TableCell>
           </TableRow>
         ))}
@@ -197,6 +226,7 @@ export function GpuTable({ gpus }: { gpus: Reading['gpus'] }) {
  * @param props.containers - The reading's containers.
  */
 export function ContainerTable({ containers }: { containers: Reading['containers'] }) {
+  const [{ byteUnits }] = useSettings();
   if (containers.length === 0) {
     return <EmptyState compact title="This host reports no containers." />;
   }
@@ -219,7 +249,7 @@ export function ContainerTable({ containers }: { containers: Reading['containers
             <TableCell>{container.status ?? '—'}</TableCell>
             <TableCell className="text-muted-foreground">{container.image ?? '—'}</TableCell>
             <TableCell className={NUMERIC}>{formatPercent(container.cpuPercent)}</TableCell>
-            <TableCell className={NUMERIC}>{formatBytes(container.memoryBytes)}</TableCell>
+            <TableCell className={NUMERIC}>{formatBytes(container.memoryBytes, byteUnits)}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -228,11 +258,12 @@ export function ContainerTable({ containers }: { containers: Reading['containers
 }
 
 /**
- * The busiest processes, as the server ranked them.
+ * The busiest processes, as the server ranked them, down to the count in the settings.
  *
  * @param props.processes - The reading's top processes.
  */
 export function ProcessTable({ processes }: { processes: Reading['processes'] }) {
+  const [{ byteUnits, processCount }] = useSettings();
   if (processes.length === 0) {
     return <EmptyState compact title="No processes reported." />;
   }
@@ -249,14 +280,14 @@ export function ProcessTable({ processes }: { processes: Reading['processes'] })
         </TableRow>
       </TableHeader>
       <TableBody>
-        {processes.map((process) => (
+        {processes.slice(0, processCount).map((process) => (
           <TableRow key={process.pid}>
             <TableHead>{process.name}</TableHead>
             <TableCell className={NUMERIC}>{process.pid}</TableCell>
             <TableCell className="text-muted-foreground">{process.user ?? '—'}</TableCell>
             <TableCell className={NUMERIC}>{formatPercent(process.cpuPercent)}</TableCell>
             <TableCell className={NUMERIC}>
-              {formatBytes(process.memoryBytes)} ({formatPercent(process.memoryPercent)})
+              {formatBytes(process.memoryBytes, byteUnits)} ({formatPercent(process.memoryPercent)})
             </TableCell>
           </TableRow>
         ))}

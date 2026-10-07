@@ -7,6 +7,7 @@ import { type FilesystemRow, tidyFilesystems, viewFilesystems } from '../glances
 import type { Disk, NetworkInterface, Reading } from '../glances/reading.ts';
 import { viewDisks, viewInterfaces } from '../glances/traffic-view.ts';
 import type { HostState } from '../monitor/host-state.ts';
+import { paced, paceInterval } from '../monitor/paced-watch.ts';
 import { TYPE_DEFS } from './type-defs.ts';
 
 /** Arguments of `Query.host`. */
@@ -17,6 +18,7 @@ interface HostArgs {
 /** Arguments of `Subscription.hostChanged`. */
 interface HostChangedArgs {
   name?: string | null;
+  intervalSeconds?: number | null;
 }
 
 /** Arguments of the `Reading` fields that take a detail level. */
@@ -69,6 +71,15 @@ const resolvers = {
      * @returns The host's state.
      */
     host: (_parent: unknown, args: HostArgs, ctx: Context): HostState => loadHost(ctx, args.name),
+    /**
+     * Resolves `Query.sampleIntervalSeconds`.
+     *
+     * @param _parent - Unused.
+     * @param _args - Unused.
+     * @param ctx - Request context.
+     * @returns The sampler's interval, in seconds.
+     */
+    sampleIntervalSeconds: (_parent: unknown, _args: unknown, ctx: Context): number => ctx.sampleIntervalSeconds,
   },
   Reading: {
     /**
@@ -118,7 +129,7 @@ const resolvers = {
        * Subscribes to `Subscription.hostChanged`, until the client leaves.
        *
        * @param _parent - Unused.
-       * @param args - The host to follow, or none for all.
+       * @param args - The host to follow, or none for all, and how often to hear of each.
        * @param ctx - Request context.
        * @returns The stream of host states.
        */
@@ -127,7 +138,10 @@ const resolvers = {
         if (name !== null) {
           loadHost(ctx, name);
         }
-        return ctx.bus.watch(name, ctx.request?.signal);
+        const events = ctx.bus.watch(name, ctx.request?.signal);
+        const sampleIntervalSeconds = ctx.sampleIntervalSeconds;
+        const intervalSeconds = paceInterval(args.intervalSeconds ?? null, sampleIntervalSeconds);
+        return paced(events, { intervalSeconds, sampleIntervalSeconds });
       },
       /**
        * Resolves each event to the host it carries.

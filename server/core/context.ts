@@ -5,6 +5,8 @@ import type { HostStore } from '../monitor/host-store.ts';
 export interface Context {
   store: HostStore;
   bus: HostBus;
+  /** How often the sampler reads every host, in seconds. No subscriber is updated faster. */
+  sampleIntervalSeconds: number;
   /** The HTTP request, when there is one. Its signal ends a subscription the client left. */
   request?: Request;
 }

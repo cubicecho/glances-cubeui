@@ -14,6 +14,8 @@ services:
     environment:
       GLANCES_HOSTS: ${GLANCES_HOSTS:?GLANCES_HOSTS is required, for example nas=http://nas:61208. See .env.example}
       TRUST_PROXY: ${TRUST_PROXY:-false}
+      # Empty means the default, 3 seconds.
+      SAMPLE_INTERVAL_SECONDS: ${SAMPLE_INTERVAL_SECONDS:-}
       NODE_ENV: production
     ports:
       - "${PORT:-3000}:3000"
