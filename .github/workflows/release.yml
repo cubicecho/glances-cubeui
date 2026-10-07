@@ -8,9 +8,11 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - main
+  # After CI finishes on main, so a commit that fails its checks is never released.
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   # Publishes the images for a version that already exists, without cutting a release.
   workflow_dispatch:
     inputs:
@@ -18,8 +20,15 @@ on:
         description: The version to tag the images with, such as 1.5.0
         required: true
 
+# One release at a time, in order: a second run waits, it does not cancel the first mid-push.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
+    # workflow_run fires for failed CI runs too.
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -33,6 +42,8 @@ jobs:
           # semantic-release reads the whole history to work out what the last
           # release was and which commits have landed since.
           fetch-depth: 0
+          # The commit CI passed, not whatever main has moved to since.
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - uses: actions/setup-node@v7
         with:
