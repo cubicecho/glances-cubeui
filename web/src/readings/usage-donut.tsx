@@ -17,13 +17,14 @@ const RADIUS = (VIEW_BOX_SIZE - STROKE_WIDTH) / 2;
  * @param props.value - The figure in the middle.
  * @param props.format - Writes the figure, such as `formatPercent`.
  * @param [props.amount] - The amounts behind the share, such as `"31.2/62.7 GiB"`.
+ * @param [props.detail] - What the figure is measured against or goes with, such as `"24 cores"`, under the name.
  *
  * @remarks
  * The figure is a prop of its own because not every ring shows its share: load is drawn as a
  * share of the cores but read as a load average. Ring and figure move to a new value together,
  * over half the time between updates; the accessible name states the new value at once.
  * The ring is sized for the amounts line, the longest thing it holds, whether or not a ring has one,
- * so a row of rings is one size.
+ * so a row of rings is one size. The line for the detail is kept whether or not a ring has one, so names line up.
  */
 export function UsageDonut({
   label,
@@ -31,15 +32,17 @@ export function UsageDonut({
   value,
   format,
   amount,
+  detail,
 }: {
   label: string;
   percent: number | null;
   value: number | null;
   format: (value: number | null) => string;
   amount?: string;
+  detail?: string;
 }) {
   const figure = format(value);
-  const accessibleName = amount === undefined ? `${label} ${figure}` : `${label} ${figure}, ${amount}`;
+  const accessibleName = [`${label} ${figure}`, amount, detail].filter((part) => part !== undefined).join(', ');
   const durationMs = useAnimationMs();
   const shownPercent = useAnimatedNumber(percent, durationMs);
   const shownValue = useAnimatedNumber(value, durationMs);
@@ -69,7 +72,10 @@ export function UsageDonut({
           {amount === undefined ? null : <span className="text-[0.625rem] text-muted-foreground">{amount}</span>}
         </span>
       </div>
-      <span className="text-center text-muted-foreground text-xs">{label}</span>
+      <span className="flex flex-col items-center text-center text-xs">
+        <span className="font-medium">{label}</span>
+        <span className="min-h-4 text-muted-foreground tabular-nums">{detail}</span>
+      </span>
     </div>
   );
 }

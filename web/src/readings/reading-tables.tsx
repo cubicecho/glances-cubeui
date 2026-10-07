@@ -102,12 +102,12 @@ export function FilesystemTable({ filesystems }: { filesystems: Reading['filesys
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="-ml-3 text-foreground"
+                      className="-ml-3"
                       aria-expanded={isOpen}
                       onClick={() => toggle(filesystem.mountPoint)}
                     >
                       {isOpen ? <ChevronDown aria-hidden /> : <ChevronRight aria-hidden />}
-                      {filesystem.mountPoint}
+                      <span className="text-foreground">{filesystem.mountPoint}</span>
                       <span className="font-normal text-muted-foreground">{filesystem.datasets.length} datasets</span>
                     </Button>
                   ) : (
