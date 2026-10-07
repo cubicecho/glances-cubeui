@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cubicecho/glances-cubeui/compare/v1.0.0...v1.0.1) (2026-10-07)
+
+
+### Bug Fixes
+
+* **release:** stamp the released version into package.json ([2584547](https://github.com/cubicecho/glances-cubeui/commit/2584547ffb34e5fde1a3f6e458d287ae47ee425d))
+
 # 1.0.0 (2026-10-07)
 
 
