@@ -23,7 +23,7 @@ describe('sampleIntervalSeconds', () => {
     expect(sampleIntervalSeconds()).toBe(seconds);
   });
 
-  it.each(['fast', '0', '-3', '0.5', '301', '5s', 'Infinity'])('refuses "%s" with a sentence', (raw) => {
+  it.each(['fast', '0', '-3', '0.25', '301', '5s', 'Infinity'])('refuses "%s" with a sentence', (raw) => {
     vi.stubEnv('SAMPLE_INTERVAL_SECONDS', raw);
     expect(() => sampleIntervalSeconds()).toThrow(`SAMPLE_INTERVAL_SECONDS is "${raw}". Expected a number of seconds`);
   });

@@ -49,7 +49,7 @@ export interface SamplerSettings {
   maxIntervalSeconds: number;
   /** How long one Glances request may take, in seconds. */
   requestTimeoutSeconds: number;
-  /** How many samples are kept per host. At the default interval this is ten minutes. */
+  /** How many samples are kept per host. At the default interval this is ten minutes, at the shortest 100 seconds. */
   historySampleCount: number;
   /** How many processes a reading keeps, busiest first. */
   topProcessCount: number;
@@ -57,7 +57,7 @@ export interface SamplerSettings {
 
 export const SAMPLER_DEFAULTS: Readonly<SamplerSettings> = Object.freeze({
   intervalSeconds: 3,
-  minIntervalSeconds: 1,
+  minIntervalSeconds: 0.5,
   maxIntervalSeconds: 300,
   requestTimeoutSeconds: 5,
   historySampleCount: 200,

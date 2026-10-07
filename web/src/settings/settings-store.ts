@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   BYTE_UNITS_BINARY,
   BYTE_UNITS_DECIMAL,
+  Density,
   DetailLevel,
   SETTINGS_DEFAULTS,
   type Settings,
@@ -22,6 +23,7 @@ const SETTINGS_SCHEMA: z.ZodType<Settings> = z.object({
   processCount: z.number().int().positive().catch(SETTINGS_DEFAULTS.processCount),
   detailLevel: z.enum(Object.values(DetailLevel)).catch(SETTINGS_DEFAULTS.detailLevel),
   hideSystemStorage: z.boolean().catch(SETTINGS_DEFAULTS.hideSystemStorage),
+  density: z.enum(Object.values(Density)).catch(SETTINGS_DEFAULTS.density),
 });
 
 /** The part of `localStorage` the store uses. Either call may throw, as a blocked store does. */

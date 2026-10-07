@@ -31,6 +31,14 @@
   --usage-100: #f0524a;
 }
 
+/*
+ * The dense view (Settings, Appearance). Every padding, gap and fixed size is a multiple of --spacing,
+ * so one smaller step tightens the vendored components without editing them. Type sizes do not follow it.
+ */
+:root[data-density="dense"] {
+  --spacing: 0.1875rem;
+}
+
 html,
 body,
 #root {

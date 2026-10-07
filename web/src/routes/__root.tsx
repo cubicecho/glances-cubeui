@@ -10,6 +10,7 @@ import { useThemePreference } from '@/components/ui/theme-preference';
 import { Activity, LayoutDashboard, Server, ServerOff } from '@/core/app-icons';
 import { HOST_STATUS_LABELS } from '@/hosts/host-status-badge';
 import { type Host, useHosts, useHostsSubscription } from '@/hosts/use-live-hosts';
+import { useDensity } from '@/settings/use-settings';
 
 const SidebarLink = createLink(SidebarNavItem);
 const BarLink = createLink(BarNavItem);
@@ -46,10 +47,11 @@ function hostIcon(host: Host) {
  * The app shell: the host list beside whichever page the route draws.
  *
  * @remarks
- * This is where the hosts subscription and the theme preference are mounted, once for every page.
+ * This is where the hosts subscription, the theme preference and the density are mounted, once for every page.
  */
 function RootRoute() {
   useThemePreference();
+  useDensity();
   useHostsSubscription();
   const query = useHosts();
   const hosts = query.data ?? [];
