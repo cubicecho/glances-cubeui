@@ -12,6 +12,17 @@ export const TEMPERATURE_UNIT_FAHRENHEIT = 'fahrenheit';
 /** The unit temperatures are shown in. */
 export type TemperatureUnit = typeof TEMPERATURE_UNIT_CELSIUS | typeof TEMPERATURE_UNIT_FAHRENHEIT;
 
+/** How much of a host's filesystems and network interfaces is listed. The values are the API's `DetailLevel`. */
+export const DetailLevel = {
+  /** Storage pools and physical interfaces. */
+  Summary: 'SUMMARY',
+  /** Each filesystem and virtual interface, without what a container engine made. */
+  Useful: 'USEFUL',
+  /** Everything Glances reports. */
+  All: 'ALL',
+} as const;
+export type DetailLevel = (typeof DetailLevel)[keyof typeof DetailLevel];
+
 /**
  * What one browser's user has chosen. To add a setting: a member here, its default below, and its
  * rule in `SETTINGS_SCHEMA` (`settings-store.ts`).
@@ -25,6 +36,10 @@ export interface Settings {
   temperatureUnit: TemperatureUnit;
   /** How many of a host's busiest processes its page lists. */
   processCount: number;
+  /** How much of a host's filesystems and network interfaces is listed. */
+  detailLevel: DetailLevel;
+  /** Whether boot partitions and the pool that only holds the operating system are left out. */
+  hideSystemStorage: boolean;
 }
 
 export const SETTINGS_DEFAULTS: Readonly<Settings> = Object.freeze({
@@ -32,6 +47,8 @@ export const SETTINGS_DEFAULTS: Readonly<Settings> = Object.freeze({
   byteUnits: BYTE_UNITS_BINARY,
   temperatureUnit: TEMPERATURE_UNIT_CELSIUS,
   processCount: 15,
+  detailLevel: DetailLevel.Summary,
+  hideSystemStorage: true,
 });
 
 const FIVE_SECONDS = 5;

@@ -1,3 +1,25 @@
+fragment FilesystemFields on Filesystem {
+  mountPoint
+  deviceName
+  type
+  sizeBytes
+  usedBytes
+  percent
+}
+
+fragment FilesystemRowFields on Filesystem {
+  ...FilesystemFields
+  datasets {
+    ...FilesystemFields
+  }
+}
+
+fragment NetworkInterfaceFields on NetworkInterface {
+  name
+  receivedBytesPerSecond
+  sentBytesPerSecond
+}
+
 fragment HostFields on Host {
   name
   status
@@ -45,19 +67,14 @@ fragment HostFields on Host {
       usedBytes
       percent
     }
-    filesystems {
-      mountPoint
-      deviceName
-      type
-      sizeBytes
-      usedBytes
-      percent
+    filesystems(detail: $detail, hideSystem: $hideSystem) {
+      ...FilesystemRowFields
     }
-    networkInterfaces {
-      name
-      receivedBytesPerSecond
-      sentBytesPerSecond
+    filesystemCount
+    networkInterfaces(detail: $detail) {
+      ...NetworkInterfaceFields
     }
+    networkInterfaceCount
     sensors {
       label
       value
@@ -96,7 +113,7 @@ fragment HostFields on Host {
   }
 }
 
-query Hosts {
+query Hosts($detail: DetailLevel!, $hideSystem: Boolean!) {
   hosts {
     ...HostFields
   }
@@ -106,7 +123,21 @@ query SampleInterval {
   sampleIntervalSeconds
 }
 
-subscription HostChanged($intervalSeconds: Float) {
+query HostEverything($name: String!) {
+  host(name: $name) {
+    name
+    reading {
+      filesystems(detail: ALL) {
+        ...FilesystemRowFields
+      }
+      networkInterfaces(detail: ALL) {
+        ...NetworkInterfaceFields
+      }
+    }
+  }
+}
+
+subscription HostChanged($intervalSeconds: Float, $detail: DetailLevel!, $hideSystem: Boolean!) {
   hostChanged(intervalSeconds: $intervalSeconds) {
     ...HostFields
   }

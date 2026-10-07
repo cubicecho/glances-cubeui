@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { useState } from 'react';
 import { DescriptionList, PropertyRow } from '@/components/description-list';
 import { EmptyState } from '@/components/page';
 import { PageLayout } from '@/components/page-layout';
 import { QueryState } from '@/components/query-state';
 import { Section } from '@/components/section';
 import { Alert } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import { ServerOff } from '@/core/app-icons';
 import { formatBytes, formatPercent, formatRate, formatTime } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
-import { type Host, useHosts } from '@/hosts/use-live-hosts';
+import { type Host, useHostEverything, useHosts } from '@/hosts/use-live-hosts';
 import { ReadingStats } from '@/readings/reading-stats';
 import {
   ContainerTable,
@@ -61,6 +63,37 @@ function HostRoute() {
 }
 
 /**
+ * Switches a table between the rows the settings ask for and every row the host reports.
+ *
+ * @param props.shownCount - How many rows the settings show.
+ * @param props.count - How many rows the host reports.
+ * @param props.showsAll - Whether the table is showing every row.
+ * @param props.onChange - Called with the new choice.
+ * @returns The button, or nothing when the settings already show every row.
+ */
+function ShowAllButton({
+  shownCount,
+  count,
+  showsAll,
+  onChange,
+}: {
+  shownCount: number;
+  count: number;
+  showsAll: boolean;
+  onChange: (showsAll: boolean) => void;
+}) {
+  const hidesNothing = shownCount >= count;
+  if (hidesNothing && showsAll === false) {
+    return null;
+  }
+  return (
+    <Button variant="ghost" size="sm" aria-pressed={showsAll} onClick={() => onChange(showsAll === false)}>
+      {showsAll ? 'Show fewer' : `Show all ${count}`}
+    </Button>
+  );
+}
+
+/**
  * Everything the page shows about a host that exists.
  *
  * @param props.host - The host to draw.
@@ -68,6 +101,9 @@ function HostRoute() {
 function HostReadings({ host }: { host: Host }) {
   const { reading, history } = host;
   const [{ byteUnits }] = useSettings();
+  const [showsAllFilesystems, setShowsAllFilesystems] = useState(false);
+  const [showsAllInterfaces, setShowsAllInterfaces] = useState(false);
+  const everything = useHostEverything(host.name, showsAllFilesystems || showsAllInterfaces).data;
 
   return (
     <>
@@ -104,7 +140,7 @@ function HostReadings({ host }: { host: Host }) {
         <Section
           surface="card"
           title="Network"
-          description="All interfaces together."
+          description="Physical interfaces together."
           content={
             <UsageChart
               samples={history}
@@ -123,14 +159,40 @@ function HostReadings({ host }: { host: Host }) {
           {reading.gpus.length > 0 ? (
             <Section surface="card" title="GPU" content={<GpuTable gpus={reading.gpus} />} />
           ) : null}
-          <Section surface="card" title="Filesystems" content={<FilesystemTable filesystems={reading.filesystems} />} />
+          <Section
+            surface="card"
+            title="Filesystems"
+            action={
+              <ShowAllButton
+                shownCount={reading.filesystems.length}
+                count={reading.filesystemCount}
+                showsAll={showsAllFilesystems}
+                onChange={setShowsAllFilesystems}
+              />
+            }
+            content={
+              <FilesystemTable filesystems={(showsAllFilesystems && everything?.filesystems) || reading.filesystems} />
+            }
+          />
           <Section surface="card" title="Top processes" content={<ProcessTable processes={reading.processes} />} />
           <Section surface="card" title="Containers" content={<ContainerTable containers={reading.containers} />} />
           <div className="grid gap-6 xl:grid-cols-2">
             <Section
               surface="card"
               title="Network interfaces"
-              content={<NetworkTable interfaces={reading.networkInterfaces} />}
+              action={
+                <ShowAllButton
+                  shownCount={reading.networkInterfaces.length}
+                  count={reading.networkInterfaceCount}
+                  showsAll={showsAllInterfaces}
+                  onChange={setShowsAllInterfaces}
+                />
+              }
+              content={
+                <NetworkTable
+                  interfaces={(showsAllInterfaces && everything?.networkInterfaces) || reading.networkInterfaces}
+                />
+              }
             />
             <Section surface="card" title="Sensors" content={<SensorTable sensors={reading.sensors} />} />
           </div>

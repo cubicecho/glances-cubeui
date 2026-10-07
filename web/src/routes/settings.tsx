@@ -9,6 +9,7 @@ import {
   BYTE_UNITS_BINARY,
   BYTE_UNITS_DECIMAL,
   type ByteUnits,
+  DetailLevel,
   PROCESS_COUNT_CHOICES,
   TEMPERATURE_UNIT_CELSIUS,
   TEMPERATURE_UNIT_FAHRENHEIT,
@@ -36,6 +37,19 @@ const PROCESS_COUNT_CHOICE_LIST: readonly Choice<number>[] = PROCESS_COUNT_CHOIC
   value: count,
   label: String(count),
 }));
+const DETAIL_LEVEL_CHOICES: readonly Choice<DetailLevel>[] = [
+  { value: DetailLevel.Summary, label: 'Summary', hint: 'Storage pools and physical network interfaces' },
+  {
+    value: DetailLevel.Useful,
+    label: 'Useful',
+    hint: 'Adds each filesystem and virtual interface, without what containers make',
+  },
+  { value: DetailLevel.All, label: 'All', hint: 'Everything Glances reports' },
+];
+const HIDE_SYSTEM_STORAGE_CHOICES: readonly Choice<boolean>[] = [
+  { value: true, label: 'Hide' },
+  { value: false, label: 'Show' },
+];
 const ROWS = 'flex flex-col gap-4';
 
 /**
@@ -108,13 +122,29 @@ function SettingsRoute() {
             surface="card"
             title="Host pages"
             content={
-              <ChoiceSetting
-                title="Top processes"
-                description="How many of a host's busiest processes its page lists."
-                choices={PROCESS_COUNT_CHOICE_LIST}
-                value={settings.processCount}
-                onChange={(processCount) => update({ processCount })}
-              />
+              <div className={ROWS}>
+                <ChoiceSetting
+                  title="Detail"
+                  description="How much of a host's filesystems and network interfaces is listed. Each table can still show all."
+                  choices={DETAIL_LEVEL_CHOICES}
+                  value={settings.detailLevel}
+                  onChange={(detailLevel) => update({ detailLevel })}
+                />
+                <ChoiceSetting
+                  title="OS storage"
+                  description="Boot partitions, an appliance's own datasets, and the pool the operating system runs from when data is kept on another."
+                  choices={HIDE_SYSTEM_STORAGE_CHOICES}
+                  value={settings.hideSystemStorage}
+                  onChange={(hideSystemStorage) => update({ hideSystemStorage })}
+                />
+                <ChoiceSetting
+                  title="Top processes"
+                  description="How many of a host's busiest processes its page lists."
+                  choices={PROCESS_COUNT_CHOICE_LIST}
+                  value={settings.processCount}
+                  onChange={(processCount) => update({ processCount })}
+                />
+              </div>
             }
           />
           <Section

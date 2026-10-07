@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
 import { OPERATION_LIMIT_DEFAULTS, SAMPLER_DEFAULTS } from '../../server/core/defaults.ts';
 import { ErrorCode } from '../../server/core/errors.ts';
@@ -12,6 +13,8 @@ import { createFakeClient, hostNamed, portOf } from '../helpers.ts';
 
 /** Past `HTTP_DEFAULTS.bodyLimit`, which is 1 MB. */
 const OVERSIZED_PADDING_BYTES = 1_100_000;
+/** The operations the web app sends, which the limits must let through. */
+const WEB_OPERATIONS = new URL('../../web/src/graphql/hosts.graphql', import.meta.url);
 const HOSTS_QUERY = '{ hosts { name status error reading { system { hostname } } history { cpuPercent } } }';
 
 describe('app', () => {
@@ -134,6 +137,19 @@ describe('app', () => {
     await sampleUntilReceived(createFakeClient({ nas: 'connect ECONNREFUSED' }), HostStatus.Unreachable);
     controller.abort();
     expect(received.match(/event: next/g)).toHaveLength(2);
+  });
+
+  it('answers the queries the web app sends', async () => {
+    const query = await readFile(WEB_OPERATIONS, 'utf8');
+    const hosts = await (
+      await post({ query, operationName: 'Hosts', variables: { detail: 'SUMMARY', hideSystem: true } })
+    ).json();
+    expect(hosts.errors).toBeUndefined();
+    expect(hosts.data.hosts.length).toBeGreaterThan(0);
+    const everything = await (
+      await post({ query, operationName: 'HostEverything', variables: { name: hosts.data.hosts[0].name } })
+    ).json();
+    expect(everything.errors).toBeUndefined();
   });
 
   it('refuses a document with more aliases than maxAliases', async () => {

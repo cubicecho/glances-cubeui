@@ -1,4 +1,9 @@
-import { BYTE_UNITS_DECIMAL, SETTINGS_DEFAULTS, TEMPERATURE_UNIT_FAHRENHEIT } from '../../web/src/settings/defaults.ts';
+import {
+  BYTE_UNITS_DECIMAL,
+  DetailLevel,
+  SETTINGS_DEFAULTS,
+  TEMPERATURE_UNIT_FAHRENHEIT,
+} from '../../web/src/settings/defaults.ts';
 import {
   createSettingsStore,
   parseSettings,
@@ -45,6 +50,8 @@ describe('parseSettings', () => {
       byteUnits: BYTE_UNITS_DECIMAL,
       temperatureUnit: TEMPERATURE_UNIT_FAHRENHEIT,
       processCount: 5,
+      detailLevel: DetailLevel.All,
+      hideSystemStorage: false,
     };
     expect(parseSettings(JSON.stringify(stored))).toEqual(stored);
   });
@@ -55,6 +62,8 @@ describe('parseSettings', () => {
       byteUnits: 'furlongs',
       temperatureUnit: TEMPERATURE_UNIT_FAHRENHEIT,
       processCount: 2.5,
+      detailLevel: 'EVERYTHING',
+      hideSystemStorage: 'yes',
     });
     expect(parseSettings(raw)).toEqual({ ...SETTINGS_DEFAULTS, temperatureUnit: TEMPERATURE_UNIT_FAHRENHEIT });
   });

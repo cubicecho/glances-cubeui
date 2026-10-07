@@ -2,7 +2,7 @@ import { SettingRow } from '@/components/setting-row';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 /** One option of a {@link ChoiceSetting}. */
-export interface Choice<TValue extends string | number> {
+export interface Choice<TValue extends string | number | boolean> {
   /** What is stored when it is picked. */
   value: TValue;
   /** The words on its segment. */
@@ -11,7 +11,7 @@ export interface Choice<TValue extends string | number> {
   hint?: string;
 }
 
-interface ChoiceSettingProps<TValue extends string | number> {
+interface ChoiceSettingProps<TValue extends string | number | boolean> {
   /** What the setting is called. It names the group of options. */
   title: string;
   /** One line on what the setting changes. */
@@ -24,12 +24,15 @@ interface ChoiceSettingProps<TValue extends string | number> {
   onChange: (value: TValue) => void;
 }
 
+/** A segment as wide as its label. The row gives the group no width to share out, so sharing would cut labels short. */
+const SEGMENT = 'min-w-fit flex-none';
+
 /**
  * One setting picked from a short list: its title and description beside a row of segments.
  *
  * @param props - The setting's words, its options, the current value and what to tell of a change.
  */
-export function ChoiceSetting<TValue extends string | number>({
+export function ChoiceSetting<TValue extends string | number | boolean>({
   title,
   description,
   choices,
@@ -51,13 +54,20 @@ export function ChoiceSetting<TValue extends string | number>({
       actionSlot={({ titleId, descriptionId }) => (
         <RadioGroup
           variant="segmented"
+          className="w-auto"
           value={String(value)}
           onValueChange={pick}
           aria-labelledby={titleId}
           aria-describedby={descriptionId}
         >
           {choices.map((choice) => (
-            <RadioGroupItem key={choice.value} value={String(choice.value)} label={choice.label} hint={choice.hint} />
+            <RadioGroupItem
+              key={String(choice.value)}
+              value={String(choice.value)}
+              label={choice.label}
+              hint={choice.hint}
+              className={SEGMENT}
+            />
           ))}
         </RadioGroup>
       )}

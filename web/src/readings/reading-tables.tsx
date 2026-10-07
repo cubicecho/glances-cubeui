@@ -1,4 +1,7 @@
+import { Fragment, useState } from 'react';
 import { EmptyState } from '@/components/page';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronRight } from '@/components/ui/icons';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatBytes, formatFigure, formatPercent, formatRate, formatTemperature } from '@/core/format';
 import type { Host } from '@/hosts/use-live-hosts';
@@ -33,16 +36,48 @@ function sensorValue(sensor: Reading['sensors'][number], temperatureUnit: Temper
   return formatTemperature(sensor.value, reportedIn, temperatureUnit);
 }
 
+type FilesystemRow = Reading['filesystems'][number];
+
 /**
- * Mounted filesystems with how full each is.
+ * The cells of one filesystem after its name: device, usage bar, used and size.
+ *
+ * @param props.filesystem - The filesystem, or a pool's total.
+ */
+function FilesystemCells({ filesystem }: { filesystem: Omit<FilesystemRow, 'datasets'> }) {
+  const [{ byteUnits }] = useSettings();
+  return (
+    <>
+      <TableCell className="text-muted-foreground">{filesystem.deviceName ?? '—'}</TableCell>
+      <TableCell>
+        <UsageBar
+          percent={filesystem.percent}
+          label={`${filesystem.mountPoint} used`}
+          valueLabel={formatPercent(filesystem.percent)}
+        />
+      </TableCell>
+      <TableCell className={NUMERIC}>
+        {formatBytes(filesystem.usedBytes, byteUnits)} ({formatPercent(filesystem.percent)})
+      </TableCell>
+      <TableCell className={NUMERIC}>{formatBytes(filesystem.sizeBytes, byteUnits)}</TableCell>
+    </>
+  );
+}
+
+/**
+ * Mounted filesystems with how full each is. A pool that totals several opens to list them.
  *
  * @param props.filesystems - The reading's filesystems.
  */
 export function FilesystemTable({ filesystems }: { filesystems: Reading['filesystems'] }) {
-  const [{ byteUnits }] = useSettings();
+  const [openPools, setOpenPools] = useState<readonly string[]>([]);
   if (filesystems.length === 0) {
     return <EmptyState compact title="No filesystems reported." />;
   }
+  const toggle = (mountPoint: string): void => {
+    setOpenPools((open) =>
+      open.includes(mountPoint) ? open.filter((other) => other !== mountPoint) : [...open, mountPoint],
+    );
+  };
   return (
     <Table>
       <TableCaption className="sr-only">Filesystems</TableCaption>
@@ -56,23 +91,42 @@ export function FilesystemTable({ filesystems }: { filesystems: Reading['filesys
         </TableRow>
       </TableHeader>
       <TableBody>
-        {filesystems.map((filesystem) => (
-          <TableRow key={filesystem.mountPoint}>
-            <TableHead>{filesystem.mountPoint}</TableHead>
-            <TableCell className="text-muted-foreground">{filesystem.deviceName ?? '—'}</TableCell>
-            <TableCell>
-              <UsageBar
-                percent={filesystem.percent}
-                label={`${filesystem.mountPoint} used`}
-                valueLabel={formatPercent(filesystem.percent)}
-              />
-            </TableCell>
-            <TableCell className={NUMERIC}>
-              {formatBytes(filesystem.usedBytes, byteUnits)} ({formatPercent(filesystem.percent)})
-            </TableCell>
-            <TableCell className={NUMERIC}>{formatBytes(filesystem.sizeBytes, byteUnits)}</TableCell>
-          </TableRow>
-        ))}
+        {filesystems.map((filesystem) => {
+          const isOpen = openPools.includes(filesystem.mountPoint);
+          const hasDatasets = filesystem.datasets.length > 0;
+          return (
+            <Fragment key={filesystem.mountPoint}>
+              <TableRow>
+                <TableHead>
+                  {hasDatasets ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="-ml-3 text-foreground"
+                      aria-expanded={isOpen}
+                      onClick={() => toggle(filesystem.mountPoint)}
+                    >
+                      {isOpen ? <ChevronDown aria-hidden /> : <ChevronRight aria-hidden />}
+                      {filesystem.mountPoint}
+                      <span className="font-normal text-muted-foreground">{filesystem.datasets.length} datasets</span>
+                    </Button>
+                  ) : (
+                    filesystem.mountPoint
+                  )}
+                </TableHead>
+                <FilesystemCells filesystem={filesystem} />
+              </TableRow>
+              {isOpen
+                ? filesystem.datasets.map((dataset) => (
+                    <TableRow key={dataset.mountPoint}>
+                      <TableHead className="pl-10 font-normal">{dataset.mountPoint}</TableHead>
+                      <FilesystemCells filesystem={dataset} />
+                    </TableRow>
+                  ))
+                : null}
+            </Fragment>
+          );
+        })}
       </TableBody>
     </Table>
   );
