@@ -4,7 +4,7 @@ import express, { type Express } from 'express';
 import { createYoga } from 'graphql-yoga';
 import { isProduction, trustProxy } from '../core/config.ts';
 import type { Context } from '../core/context.ts';
-import { HTTP_DEFAULTS } from '../core/defaults.ts';
+import { HTTP_DEFAULTS, SAMPLER_DEFAULTS, type SamplerSettings } from '../core/defaults.ts';
 import { graphqlLogger } from '../graphql/logger.ts';
 import { useOperationLimits } from '../graphql/operation-limits.ts';
 import { schema } from '../graphql/schema.ts';
@@ -29,16 +29,18 @@ export interface AppDeps {
  * Builds the Express app: GraphQL, health, and the built web app when there is one. It does not listen.
  *
  * @param deps - The host store and bus.
+ * @param [overrides] - Sampler settings to replace. The interval is what subscribers are paced against.
  * @returns The app.
  */
-export function createApp(deps: AppDeps): Express {
+export function createApp(deps: AppDeps, overrides: Partial<SamplerSettings> = {}): Express {
+  const { intervalSeconds } = { ...SAMPLER_DEFAULTS, ...overrides };
   const yoga = createYoga<Record<string, never>, Context>({
     schema,
     graphqlEndpoint: GRAPHQL_ENDPOINT,
     logging: graphqlLogger,
     graphiql: isProduction() === false,
     plugins: [useOperationLimits()],
-    context: () => ({ store: deps.store, bus: deps.bus }),
+    context: () => ({ store: deps.store, bus: deps.bus, sampleIntervalSeconds: intervalSeconds }),
   });
 
   const app = express();

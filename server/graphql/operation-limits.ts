@@ -65,7 +65,8 @@ function refuseCostly({ args, setResultAndStopExecution }: OperationStart): void
 export function useOperationLimits(): Plugin {
   return {
     onValidate: ({ addValidationRule }) => {
-      addValidationRule(maxDepthRule({ n: maxDepth, ...armor }));
+      // A fragment spread is not a level of its own, so the depth counted is the depth of the fields asked for.
+      addValidationRule(maxDepthRule({ n: maxDepth, flattenFragments: true, ...armor }));
       addValidationRule(maxAliasesRule({ n: maxAliases, ...armor }));
     },
     // Cost needs the variables, which validation doesn't see, so it's checked when execution starts.

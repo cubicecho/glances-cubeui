@@ -3,6 +3,7 @@ import { Clock } from '@/components/ui/icons';
 import { Activity, Cpu, MemoryStick } from '@/core/app-icons';
 import { formatBytes, formatFigure, formatPercent } from '@/core/format';
 import type { Host } from '@/hosts/use-live-hosts';
+import { useSettings } from '@/settings/use-settings';
 
 /**
  * The headline figures of a host: CPU, memory, load and uptime.
@@ -10,6 +11,7 @@ import type { Host } from '@/hosts/use-live-hosts';
  * @param props.reading - The latest reading, or `null` before the first one lands.
  */
 export function ReadingStats({ reading }: { reading: Host['reading'] }) {
+  const [{ byteUnits }] = useSettings();
   const isWaiting = reading === null;
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -26,7 +28,9 @@ export function ReadingStats({ reading }: { reading: Host['reading'] }) {
         loading={isWaiting}
         value={formatPercent(reading?.memory.percent ?? null)}
         hint={
-          reading ? `${formatBytes(reading.memory.usedBytes)} of ${formatBytes(reading.memory.totalBytes)}` : undefined
+          reading
+            ? `${formatBytes(reading.memory.usedBytes, byteUnits)} of ${formatBytes(reading.memory.totalBytes, byteUnits)}`
+            : undefined
         }
       />
       <StatTile

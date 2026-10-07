@@ -1,7 +1,9 @@
+import { readFile } from 'node:fs/promises';
 import type { Server } from 'node:http';
-import { OPERATION_LIMIT_DEFAULTS } from '../../server/core/defaults.ts';
+import { OPERATION_LIMIT_DEFAULTS, SAMPLER_DEFAULTS } from '../../server/core/defaults.ts';
 import { ErrorCode } from '../../server/core/errors.ts';
 import { HttpStatus } from '../../server/core/wire.ts';
+import type { GlancesClient } from '../../server/glances/client.ts';
 import { createApp } from '../../server/http/app.ts';
 import { createHostBus, type HostBus } from '../../server/monitor/host-bus.ts';
 import { HostStatus } from '../../server/monitor/host-state.ts';
@@ -11,6 +13,8 @@ import { createFakeClient, hostNamed, portOf } from '../helpers.ts';
 
 /** Past `HTTP_DEFAULTS.bodyLimit`, which is 1 MB. */
 const OVERSIZED_PADDING_BYTES = 1_100_000;
+/** The operations the web app sends, which the limits must let through. */
+const WEB_OPERATIONS = new URL('../../web/src/graphql/hosts.graphql', import.meta.url);
 const HOSTS_QUERY = '{ hosts { name status error reading { system { hostname } } history { cpuPercent } } }';
 
 describe('app', () => {
@@ -62,6 +66,25 @@ describe('app', () => {
     ]);
   });
 
+  it('narrows a reading to the detail asked for', async () => {
+    const query = `{ host(name: "nas") { reading {
+      filesystemCount networkInterfaceCount
+      filesystems(detail: SUMMARY, hideSystem: true) { mountPoint datasets { mountPoint } }
+      networkInterfaces(detail: SUMMARY) { name }
+      every: networkInterfaces { name }
+      disks(detail: SUMMARY) { name }
+    } } }`;
+    const { data } = await (await post({ query })).json();
+    expect(data.host.reading).toEqual({
+      filesystemCount: 1,
+      networkInterfaceCount: 2,
+      filesystems: [{ mountPoint: '/etc/resolv.conf', datasets: [] }],
+      networkInterfaces: [{ name: 'eth0' }],
+      every: [{ name: 'lo' }, { name: 'eth0' }],
+      disks: [{ name: 'sda' }],
+    });
+  });
+
   it('answers an unknown host name with NOT_FOUND', async () => {
     const { errors } = await (await post({ query: '{ host(name: "nope") { name } }' })).json();
     expect(errors[0].extensions.code).toBe(ErrorCode.NotFound);
@@ -85,6 +108,48 @@ describe('app', () => {
     controller.abort();
     expect(received).toContain('event: next');
     expect(received).toContain(`{"data":{"hostChanged":{"name":"nas","status":"${HostStatus.Online}"}}}`);
+  });
+
+  it('says how often hosts are sampled', async () => {
+    const { data } = await (await post({ query: '{ sampleIntervalSeconds }' })).json();
+    expect(data.sampleIntervalSeconds).toBe(SAMPLER_DEFAULTS.intervalSeconds);
+  });
+
+  it('holds back samples from a subscriber that asked for a slower interval, but not a change of status', async () => {
+    const query = encodeURIComponent('subscription { hostChanged(name: "nas", intervalSeconds: 60) { status } }');
+    const controller = new AbortController();
+    const response = await fetch(`${base}/graphql?query=${query}`, {
+      headers: { accept: 'text/event-stream' },
+      signal: controller.signal,
+    });
+    const reader = response.body?.pipeThrough(new TextDecoderStream()).getReader();
+    let received = '';
+    const sampleUntilReceived = async (client: GlancesClient, status: HostStatus): Promise<void> => {
+      while (received.includes(status) === false) {
+        await sampleHost({ client, store, bus }, hostNamed('nas'));
+        received += (await reader?.read())?.value ?? '';
+      }
+    };
+    await sampleUntilReceived(createFakeClient(), HostStatus.Online);
+    // Well inside the minute: these are dropped, and the failure after them is not.
+    await sampleHost({ client: createFakeClient(), store, bus }, hostNamed('nas'));
+    await sampleHost({ client: createFakeClient(), store, bus }, hostNamed('nas'));
+    await sampleUntilReceived(createFakeClient({ nas: 'connect ECONNREFUSED' }), HostStatus.Unreachable);
+    controller.abort();
+    expect(received.match(/event: next/g)).toHaveLength(2);
+  });
+
+  it('answers the queries the web app sends', async () => {
+    const query = await readFile(WEB_OPERATIONS, 'utf8');
+    const hosts = await (
+      await post({ query, operationName: 'Hosts', variables: { detail: 'SUMMARY', hideSystem: true } })
+    ).json();
+    expect(hosts.errors).toBeUndefined();
+    expect(hosts.data.hosts.length).toBeGreaterThan(0);
+    const everything = await (
+      await post({ query, operationName: 'HostEverything', variables: { name: hosts.data.hosts[0].name } })
+    ).json();
+    expect(everything.errors).toBeUndefined();
   });
 
   it('refuses a document with more aliases than maxAliases', async () => {
