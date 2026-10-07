@@ -50,7 +50,8 @@ export function UsageDonut({
 
   return (
     <div role="img" aria-label={accessibleName} className="flex flex-col items-center gap-1.5">
-      <div className="relative size-24">
+      {/* In rem, not spacing steps: the ring holds text, which the dense view does not shrink. */}
+      <div className="relative size-[6rem]">
         <svg viewBox={`0 0 ${VIEW_BOX_SIZE} ${VIEW_BOX_SIZE}`} className="size-full -rotate-90" aria-hidden="true">
           <circle cx={CENTER} cy={CENTER} r={RADIUS} fill="none" strokeWidth={STROKE_WIDTH} className="stroke-muted" />
           {filled > 0 ? (

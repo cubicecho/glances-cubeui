@@ -1,5 +1,6 @@
 import {
   BYTE_UNITS_DECIMAL,
+  Density,
   DetailLevel,
   SETTINGS_DEFAULTS,
   TEMPERATURE_UNIT_FAHRENHEIT,
@@ -52,6 +53,7 @@ describe('parseSettings', () => {
       processCount: 5,
       detailLevel: DetailLevel.All,
       hideSystemStorage: false,
+      density: Density.Dense,
     };
     expect(parseSettings(JSON.stringify(stored))).toEqual(stored);
   });
@@ -64,6 +66,7 @@ describe('parseSettings', () => {
       processCount: 2.5,
       detailLevel: 'EVERYTHING',
       hideSystemStorage: 'yes',
+      density: 'cramped',
     });
     expect(parseSettings(raw)).toEqual({ ...SETTINGS_DEFAULTS, temperatureUnit: TEMPERATURE_UNIT_FAHRENHEIT });
   });

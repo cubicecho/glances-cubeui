@@ -9,6 +9,7 @@ import {
   BYTE_UNITS_BINARY,
   BYTE_UNITS_DECIMAL,
   type ByteUnits,
+  Density,
   DetailLevel,
   PROCESS_COUNT_CHOICES,
   TEMPERATURE_UNIT_CELSIUS,
@@ -49,6 +50,10 @@ const DETAIL_LEVEL_CHOICES: readonly Choice<DetailLevel>[] = [
 const HIDE_SYSTEM_STORAGE_CHOICES: readonly Choice<boolean>[] = [
   { value: true, label: 'Hide' },
   { value: false, label: 'Show' },
+];
+const DENSITY_CHOICES: readonly Choice<Density>[] = [
+  { value: Density.Comfortable, label: 'Comfortable' },
+  { value: Density.Dense, label: 'Dense', hint: 'Tighter padding, gaps and table rows' },
 ];
 const ROWS = 'flex flex-col gap-4';
 
@@ -151,15 +156,24 @@ function SettingsRoute() {
             surface="card"
             title="Appearance"
             content={
-              <SettingRow
-                title="Theme"
-                description="Light, dark, or whatever this device is set to."
-                actionSlot={({ titleId }) => (
-                  <div className="w-28">
-                    <ThemePicker variant="compact" aria-labelledby={titleId} />
-                  </div>
-                )}
-              />
+              <div className={ROWS}>
+                <SettingRow
+                  title="Theme"
+                  description="Light, dark, or whatever this device is set to."
+                  actionSlot={({ titleId }) => (
+                    <div className="w-28">
+                      <ThemePicker variant="compact" aria-labelledby={titleId} />
+                    </div>
+                  )}
+                />
+                <ChoiceSetting
+                  title="Density"
+                  description="How much room cards, tables and charts leave around what they show."
+                  choices={DENSITY_CHOICES}
+                  value={settings.density}
+                  onChange={(density) => update({ density })}
+                />
+              </div>
             }
           />
         </div>

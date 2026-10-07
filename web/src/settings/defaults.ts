@@ -23,6 +23,15 @@ export const DetailLevel = {
 } as const;
 export type DetailLevel = (typeof DetailLevel)[keyof typeof DetailLevel];
 
+/** How much room the dashboard leaves around what it shows. */
+export const Density = {
+  /** The spacing the components are drawn with. */
+  Comfortable: 'comfortable',
+  /** Tighter padding, gaps and rows, so more fits on a screen. */
+  Dense: 'dense',
+} as const;
+export type Density = (typeof Density)[keyof typeof Density];
+
 /**
  * What one browser's user has chosen. To add a setting: a member here, its default below, and its
  * rule in `SETTINGS_SCHEMA` (`settings-store.ts`).
@@ -40,6 +49,8 @@ export interface Settings {
   detailLevel: DetailLevel;
   /** Whether boot partitions and the pool that only holds the operating system are left out. */
   hideSystemStorage: boolean;
+  /** How much room the dashboard leaves around what it shows. */
+  density: Density;
 }
 
 export const SETTINGS_DEFAULTS: Readonly<Settings> = Object.freeze({
@@ -49,14 +60,19 @@ export const SETTINGS_DEFAULTS: Readonly<Settings> = Object.freeze({
   processCount: 15,
   detailLevel: DetailLevel.Summary,
   hideSystemStorage: true,
+  density: Density.Comfortable,
 });
 
+const ONE_SECOND = 1;
+const THREE_SECONDS = 3;
 const FIVE_SECONDS = 5;
 const TEN_SECONDS = 10;
 const HALF_A_MINUTE_SECONDS = 30;
 const ONE_MINUTE_SECONDS = 60;
 /** The update intervals offered above the server's own, in seconds. */
 export const UPDATE_INTERVAL_CHOICES_SECONDS: readonly number[] = [
+  ONE_SECOND,
+  THREE_SECONDS,
   FIVE_SECONDS,
   TEN_SECONDS,
   HALF_A_MINUTE_SECONDS,

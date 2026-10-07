@@ -9,6 +9,8 @@ describe('updateIntervalChoices', () => {
   it('starts with the server interval and offers only slower ones after it', () => {
     expect(updateIntervalChoices(3)).toEqual([3, 5, 10, 30, 60]);
     expect(updateIntervalChoices(10)).toEqual([10, 30, 60]);
+    expect(updateIntervalChoices(0.5)).toEqual([0.5, 1, 3, 5, 10, 30, 60]);
+    expect(updateIntervalChoices(1)).toEqual([1, 3, 5, 10, 30, 60]);
   });
 
   it('offers a server interval that is not one of the usual choices', () => {
@@ -46,6 +48,7 @@ describe('updateIntervalSetting', () => {
 
 describe('formatInterval', () => {
   it('writes seconds below a minute and minutes from there', () => {
+    expect(formatInterval(0.5)).toBe('0.5 s');
     expect(formatInterval(5)).toBe('5 s');
     expect(formatInterval(60)).toBe('1 min');
     expect(formatInterval(90)).toBe('1.5 min');
