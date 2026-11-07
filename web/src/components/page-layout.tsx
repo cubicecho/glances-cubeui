@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
-import { cn, type SlotNode } from "@/lib/utils";
 import {
   COLUMNS,
   HeaderContentFooter,
   type HeaderContentFooterProps,
 } from "@/components/header-content-footer";
 import { PageHeader, type PageHeaderLevel, type PageHeaderSize } from "@/components/page-header";
+import { cn, type SlotNode } from "@/lib/utils";
 
 /** The line under a page's header, the colour `PageHeader` draws it in. */
 const HEADER_RULE = "border-b border-foreground/10";

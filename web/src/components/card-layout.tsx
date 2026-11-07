@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import { Children, createContext, isValidElement, useContext } from "react";
-import { cn, type SlotNode } from "@/lib/utils";
+import { hasRows, List } from "@/components/list";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DescribedTitle, type DescriptionPlacement, foldsDescription } from "@/components/ui/description-hint";
-import { hasRows, List } from "@/components/list";
+import { cn, type SlotNode } from "@/lib/utils";
 
 /**
  * The parts a floating panel draws a card with, handed down by the panel that already draws the

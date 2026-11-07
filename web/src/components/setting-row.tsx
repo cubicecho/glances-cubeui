@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import * as React from "react";
-import { cn, type SlotNode } from "@/lib/utils";
 import { DescribedTitle, type DescriptionPlacement, foldsDescription } from "@/components/ui/description-hint";
 import { FieldDescription, FieldTitle } from "@/components/ui/field";
+import { cn, type SlotNode } from "@/lib/utils";
 
 /** What `actionSlot` is handed when it is a function: the ids of the text on the row's left. */
 type SettingRowIds = {

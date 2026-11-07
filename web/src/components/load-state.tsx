@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { cn, type SlotNode } from "@/lib/utils";
+import { EmptyState } from "@/components/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/empty-state";
 import { RefreshCw, Search, TriangleAlert } from "@/components/ui/icons";
+import { cn, type SlotNode } from "@/lib/utils";
 
 /** What a list screen needs off its query, and nothing more. */
 type QueryLike = {

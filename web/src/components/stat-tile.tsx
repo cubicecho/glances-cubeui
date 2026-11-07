@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
+import { Card } from "@/components/ui/card";
 import { IconClassContext } from "@/components/ui/icons-base";
 import { cn, type SlotNode } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
 
 type StatTileProps = {
   /** What the figure is called: "Turns", "Daily average". Drawn above it, muted. */

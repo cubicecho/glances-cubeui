@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import type { SlotNode } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { CircleAlert } from "@/components/ui/icons";
+import type { SlotNode } from "@/lib/utils";
 
 type ErrorPageProps = {
   error: unknown;

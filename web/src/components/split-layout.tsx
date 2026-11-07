@@ -1,7 +1,7 @@
 import { createContext, type ReactNode } from "react";
+import { AppBar, type AppBarNav } from "@/components/app-bar";
 import { useReportBottomBar } from "@/lib/bottom-bar";
 import { cn, type SlotNode } from "@/lib/utils";
-import { AppBar, type AppBarNav } from "@/components/app-bar";
 
 /**
  * How much of the split one pane claims. The other takes the rest.
