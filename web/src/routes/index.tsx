@@ -19,13 +19,13 @@ function OverviewRoute() {
     <PageLayout
       title="Overview"
       description="Every Glances host this server samples, updated live."
-      content={
+      contentSlot={
         <div className="flex flex-col gap-4 py-4">
           <LoadState
             query={query}
             what="hosts"
             count={hosts.length}
-            empty={
+            emptySlot={
               <EmptyState
                 icon={Server}
                 title="No hosts configured"

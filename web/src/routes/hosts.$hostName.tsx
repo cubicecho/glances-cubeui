@@ -37,16 +37,16 @@ function HostRoute() {
   return (
     <PageLayout
       title={hostName}
-      breadcrumbs={<Link to="/">Overview</Link>}
+      backSlot={<Link to="/">Overview</Link>}
       description={host?.reading?.system.description ?? undefined}
-      action={host ? <HostStatusBadge status={host.status} /> : undefined}
-      content={
+      actionSlot={host ? <HostStatusBadge status={host.status} /> : undefined}
+      contentSlot={
         <div className="flex flex-col gap-6 py-4">
           <LoadState
             query={query}
             what="this host"
             count={host ? 1 : 0}
-            empty={
+            emptySlot={
               <EmptyState
                 icon={ServerOff}
                 level={2}
@@ -87,9 +87,13 @@ function ShowAllButton({
     return null;
   }
   return (
-    <Button variant="ghost" size="sm" aria-pressed={showsAll} onClick={() => onChange(showsAll === false)}>
-      {showsAll ? 'Show fewer' : `Show all ${count}`}
-    </Button>
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-pressed={showsAll}
+      onClick={() => onChange(showsAll === false)}
+      content={showsAll ? 'Show fewer' : `Show all ${count}`}
+    />
   );
 }
 
@@ -216,7 +220,7 @@ function HostReadings({ host }: { host: Host }) {
             title="System"
             contentSlot={
               <PropertyList
-                content={[
+                contentSlot={[
                   <PropertyRow key="hostname" label="Hostname" value={reading.system.hostname} />,
                   <PropertyRow
                     key="os"

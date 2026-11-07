@@ -96,9 +96,9 @@ function SettingsRoute() {
   return (
     <PageLayout
       title="Settings"
-      breadcrumbs={<Link to="/">Overview</Link>}
+      backSlot={<Link to="/">Overview</Link>}
       description="Kept in this browser only. Another browser or device keeps its own."
-      content={
+      contentSlot={
         <div className="flex flex-col gap-6 py-4">
           <CardLayout level={2} title="Updates" contentSlot={<UpdateIntervalSetting />} />
           <CardLayout
