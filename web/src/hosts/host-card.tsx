@@ -1,6 +1,6 @@
 import { createLink } from '@tanstack/react-router';
 import { CardLayout } from '@/components/card-layout';
-import { EmptyState } from '@/components/page';
+import { EmptyState } from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
 import { Server } from '@/core/app-icons';
 import { formatPercent } from '@/core/format';

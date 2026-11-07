@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { EmptyState } from '@/components/page';
+import { EmptyState } from '@/components/empty-state';
+import { LoadState } from '@/components/load-state';
 import { PageLayout } from '@/components/page-layout';
-import { QueryState } from '@/components/query-state';
 import { Server } from '@/core/app-icons';
 import { HostCard } from '@/hosts/host-card';
 import { useHosts } from '@/hosts/use-live-hosts';
@@ -21,7 +21,7 @@ function OverviewRoute() {
       description="Every Glances host this server samples, updated live."
       content={
         <div className="flex flex-col gap-4 py-4">
-          <QueryState
+          <LoadState
             query={query}
             what="hosts"
             count={hosts.length}

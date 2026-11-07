@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
 import { CardLayout } from '@/components/card-layout';
-import { DescriptionList, PropertyRow } from '@/components/description-list';
-import { EmptyState } from '@/components/page';
+import { EmptyState } from '@/components/empty-state';
+import { LoadState } from '@/components/load-state';
 import { PageLayout } from '@/components/page-layout';
-import { QueryState } from '@/components/query-state';
+import { PropertyList, PropertyRow } from '@/components/property-list';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { ServerOff } from '@/core/app-icons';
@@ -42,7 +42,7 @@ function HostRoute() {
       action={host ? <HostStatusBadge status={host.status} /> : undefined}
       content={
         <div className="flex flex-col gap-6 py-4">
-          <QueryState
+          <LoadState
             query={query}
             what="this host"
             count={host ? 1 : 0}
@@ -215,7 +215,7 @@ function HostReadings({ host }: { host: Host }) {
             level={2}
             title="System"
             contentSlot={
-              <DescriptionList
+              <PropertyList
                 content={[
                   <PropertyRow key="hostname" label="Hostname" value={reading.system.hostname} />,
                   <PropertyRow

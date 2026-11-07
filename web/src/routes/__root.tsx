@@ -1,8 +1,8 @@
 import { createLink, createRootRoute, Outlet, useParams, useRouterState } from '@tanstack/react-router';
-import { EmptyState } from '@/components/page';
-import { QueryState } from '@/components/query-state';
-import { RouteError } from '@/components/route-error';
-import { BarNavItem, Sidebar, SidebarNavItem, SidebarSection } from '@/components/sidebar';
+import { EmptyState } from '@/components/empty-state';
+import { ErrorPage } from '@/components/error-page';
+import { LoadState } from '@/components/load-state';
+import { AppBarItem, Sidebar, SidebarItem, SidebarSection } from '@/components/sidebar';
 import { SidebarLayout } from '@/components/split-layout';
 import { Settings } from '@/components/ui/icons';
 import { ThemePicker } from '@/components/ui/theme-picker';
@@ -12,13 +12,13 @@ import { HOST_STATUS_LABELS } from '@/hosts/host-status-badge';
 import { type Host, useHosts, useHostsSubscription } from '@/hosts/use-live-hosts';
 import { useDensity } from '@/settings/use-settings';
 
-const SidebarLink = createLink(SidebarNavItem);
-const BarLink = createLink(BarNavItem);
+const SidebarLink = createLink(SidebarItem);
+const BarLink = createLink(AppBarItem);
 const SETTINGS_PATH = '/settings';
 
 export const Route = createRootRoute({
   component: RootRoute,
-  errorComponent: ({ error, reset }) => <RouteError error={error} reset={reset} />,
+  errorComponent: ({ error, reset }) => <ErrorPage error={error} reset={reset} />,
 });
 
 /**
@@ -104,7 +104,7 @@ function RootRoute() {
                 as="nav"
                 title="Hosts"
                 status={
-                  <QueryState
+                  <LoadState
                     compact
                     query={query}
                     what="hosts"
