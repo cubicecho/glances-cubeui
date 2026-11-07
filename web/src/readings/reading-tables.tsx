@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react';
-import { EmptyState } from '@/components/page';
+import { EmptyState } from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronRight } from '@/components/ui/icons';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -105,11 +105,16 @@ export function FilesystemTable({ filesystems }: { filesystems: Reading['filesys
                       className="-ml-3"
                       aria-expanded={isOpen}
                       onClick={() => toggle(filesystem.mountPoint)}
-                    >
-                      {isOpen ? <ChevronDown aria-hidden /> : <ChevronRight aria-hidden />}
-                      <span className="text-foreground">{filesystem.mountPoint}</span>
-                      <span className="font-normal text-muted-foreground">{filesystem.datasets.length} datasets</span>
-                    </Button>
+                      iconSlot={isOpen ? <ChevronDown aria-hidden /> : <ChevronRight aria-hidden />}
+                      content={
+                        <>
+                          <span className="text-foreground">{filesystem.mountPoint}</span>
+                          <span className="font-normal text-muted-foreground">
+                            {filesystem.datasets.length} datasets
+                          </span>
+                        </>
+                      }
+                    />
                   ) : (
                     filesystem.mountPoint
                   )}

@@ -1,88 +1,41 @@
-import { Children, type ReactNode } from "react";
-import { PageHeader, type PageHeaderProps } from "@/components/page-header";
+import type { ReactNode } from "react";
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import type { IconComponent } from "@/components/ui/icons-base";
-import { cn } from "@/lib/utils";
-
-type PageProps = {
-  className?: string;
-  children: ReactNode;
-  /**
-   * Full-height flex column (`h-full min-h-0`) instead of the default `flex-1`.
-   * For a view whose body scrolls internally rather than as a whole.
-   */
-  fill?: boolean;
-  /** Whether the page itself scrolls. Off for views with an inner scroll area. */
-  scroll?: boolean;
-  /** `narrow` constrains content to `max-w-2xl` — a settings or detail form. */
-  width?: "narrow";
-};
-
-export function Page({ className, children, fill = false, scroll = true, width }: PageProps) {
-  const content = cn("container mx-auto px-4 py-6", width === "narrow" && "max-w-2xl", className);
-  const outer = fill ? "h-full min-h-0" : "flex-1";
-
-  if (!scroll) {
-    return <div className={cn("cube-rn-view", outer, "flex-col", content)}>{children}</div>;
-  }
-
-  return (
-    <div className={cn("cube-rn-view overflow-auto", outer)}>
-      <div className={cn("cube-rn-view", content)}>{children}</div>
-    </div>
-  );
-}
+import { IconClassContext, type IconComponent } from "@/components/ui/icons-base";
+import { cn, type SlotNode } from "@/lib/utils";
 
 /**
- * The title row at the top of a page. There is one `PageHeader` in this set, and it lives in
- * `page-header`; it is re-exported here so a screen importing it from its page shell keeps
- * working. It took over from the small one this file used to carry, whose props were renamed on
- * the way: `subtitle` is `description`, `actions` is `action`, the heading is an `h1` unless
- * `level` says otherwise, and the `mb-4` under it is gone — space it with the page's own gap.
+ * The glyph, as an element, as every other shell takes it: `iconSlot={<Plug />}`. `icon`, the
+ * component, is the older spelling, kept for one minor; a call site passes one or the other.
  */
-export { PageHeader, type PageHeaderProps };
+type EmptyStateIcon =
+  | {
+      iconSlot: SlotNode;
+      /** @deprecated Pass the element as `iconSlot={<Plug />}`. */
+      icon?: never;
+    }
+  | {
+      iconSlot?: never;
+      /** @deprecated Pass the element as `iconSlot={<Plug />}`. */
+      icon: IconComponent;
+    };
 
-/**
- * The responsive card grid shared by list pages.
- *
- * `grid` has no native equivalent, so the columns come from flex wrapping plus
- * a percentage width on each cell. Each child is wrapped here rather than at the
- * call sites: the width has to sit on the cell, and a `Card` that carried it
- * would then only be layout-correct inside a grid.
- */
-export function CardGrid({ className, children }: { className?: string; children: ReactNode }) {
-  return (
-    <div className={cn("cube-rn-view", "flex-row flex-wrap gap-4", className)}>
-      {Children.map(children, (child) =>
-        child == null || child === false ? null : (
-          // The basis is a fraction of the row minus its share of the `gap-4`
-          // above, which flex-basis percentages do not account for.
-          <div className="cube-rn-view w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.667rem)] xl:w-[calc(25%-0.75rem)]">
-            {child}
-          </div>
-        ),
-      )}
-    </div>
-  );
-}
-
-type EmptyStateProps = {
+export type EmptyStateProps = {
   title: string;
-  action?: ReactNode;
+  actionSlot?: SlotNode;
   /** The root. Mostly for an inset: `px-2` lines the `compact` line up with a sidebar's rows. */
   className?: string | undefined;
 } & (
-  | {
+  | ({
       /**
        * The one muted line that stands in for a short list *inside* something else — a card, a
        * sidebar section, a popover: "No labels yet." Off, it is the centred block that stands in
        * for a whole list or page. On, it keeps the left edge of what it sits in, draws no icon
        * bubble and no padding past a `py-2`, and takes no `description` and no `level`: a line
        * inside a region that already has its heading is never what a screen reader lands on. The
-       * same word, for the same place, as `QueryState`'s `compact` — whose `empty` it usually is.
+       * same word, for the same place, as `LoadState`'s `compact` — whose `emptySlot` it usually
+       * is.
        */
       compact?: false | undefined;
-      icon: IconComponent;
       description?: ReactNode;
       /**
        * Makes the title a heading of this rank. Leave it off for an empty list inside a page that
@@ -93,10 +46,12 @@ type EmptyStateProps = {
        * how it looks.
        */
       level?: 1 | 2 | 3 | undefined;
-    }
+    } & EmptyStateIcon)
   | {
       compact: true;
       /** Optional here: drawn inline before the text, at the text's size, with no bubble. */
+      iconSlot?: SlotNode;
+      /** @deprecated Pass the element as `iconSlot={<Plug />}`. */
       icon?: IconComponent | undefined;
       description?: never;
       level?: never;
@@ -120,13 +75,15 @@ type EmptyStateProps = {
  */
 export function EmptyState({
   icon: Icon,
+  iconSlot,
   title,
   description,
-  action,
+  actionSlot,
   level,
   compact,
   className,
 }: EmptyStateProps) {
+  const glyph = iconSlot ?? (Icon ? <Icon /> : null);
   if (compact) {
     return (
       <div
@@ -136,18 +93,24 @@ export function EmptyState({
           className,
         )}
       >
-        {Icon ? <Icon className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden /> : null}
-        <span className="cube-rn-text shrink text-sm text-muted-foreground">{title}</span>
-        {action}
+        {glyph == null ? null : (
+          // At the text's size and ink: the context on device, the descendant class on the web,
+          // where an icon takes `currentColor` and ignores the context.
+          <div aria-hidden className="cube-rn-view shrink-0 text-foreground/60 [&_svg]:size-4">
+            <IconClassContext.Provider value="h-4 w-4 text-foreground/60">
+              {glyph}
+            </IconClassContext.Provider>
+          </div>
+        )}
+        <span className="cube-rn-text shrink text-sm text-foreground/60">{title}</span>
+        {actionSlot}
       </div>
     );
   }
   return (
     <Empty className={className}>
       <EmptyHeader>
-        <EmptyMedia variant="icon">
-          <Icon />
-        </EmptyMedia>
+        <EmptyMedia variant="icon">{glyph}</EmptyMedia>
         {level === undefined ? (
           <EmptyTitle>{title}</EmptyTitle>
         ) : (
@@ -157,7 +120,7 @@ export function EmptyState({
         )}
         {description ? <EmptyDescription>{description}</EmptyDescription> : null}
       </EmptyHeader>
-      {action}
+      {actionSlot}
     </Empty>
   );
 }

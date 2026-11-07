@@ -1,8 +1,8 @@
 import { createLink, createRootRoute, Outlet, useParams, useRouterState } from '@tanstack/react-router';
-import { EmptyState } from '@/components/page';
-import { QueryState } from '@/components/query-state';
-import { RouteError } from '@/components/route-error';
-import { BarNavItem, Sidebar, SidebarNavItem, SidebarSection } from '@/components/sidebar';
+import { EmptyState } from '@/components/empty-state';
+import { ErrorPage } from '@/components/error-page';
+import { LoadState } from '@/components/load-state';
+import { AppBarItem, Sidebar, SidebarItem, SidebarSection } from '@/components/sidebar';
 import { SidebarLayout } from '@/components/split-layout';
 import { Settings } from '@/components/ui/icons';
 import { ThemePicker } from '@/components/ui/theme-picker';
@@ -12,13 +12,13 @@ import { HOST_STATUS_LABELS } from '@/hosts/host-status-badge';
 import { type Host, useHosts, useHostsSubscription } from '@/hosts/use-live-hosts';
 import { useDensity } from '@/settings/use-settings';
 
-const SidebarLink = createLink(SidebarNavItem);
-const BarLink = createLink(BarNavItem);
+const SidebarLink = createLink(SidebarItem);
+const BarLink = createLink(AppBarItem);
 const SETTINGS_PATH = '/settings';
 
 export const Route = createRootRoute({
   component: RootRoute,
-  errorComponent: ({ error, reset }) => <RouteError error={error} reset={reset} />,
+  errorComponent: ({ error, reset }) => <ErrorPage error={error} reset={reset} />,
 });
 
 /**
@@ -66,59 +66,65 @@ function RootRoute() {
       sidebarWidth="auto"
       divider="none"
       sidebarHideBelow="md"
-      brand={<Brand />}
+      brandSlot={<Brand />}
       navLabel="Main"
-      action={
+      actionSlot={
         <div className="w-28">
           <ThemePicker variant="compact" />
         </div>
       }
-      nav={[
-        <BarLink key="overview" to="/" label="Overview" icon={<LayoutDashboard />} active={isOverview} />,
+      navSlot={[
+        <BarLink key="overview" to="/" label="Overview" iconSlot={<LayoutDashboard />} active={isOverview} />,
         ...hosts.map((host) => (
           <BarLink
             key={host.name}
             to="/hosts/$hostName"
             params={{ hostName: host.name }}
             label={host.name}
-            icon={hostIcon(host)}
+            iconSlot={hostIcon(host)}
             active={host.name === hostName}
           />
         )),
-        <BarLink key="settings" to={SETTINGS_PATH} label="Settings" icon={<Settings />} active={isSettings} />,
+        <BarLink key="settings" to={SETTINGS_PATH} label="Settings" iconSlot={<Settings />} active={isSettings} />,
       ]}
-      sidebar={
+      sidebarSlot={
         <Sidebar
           label="Main"
-          header={<Brand />}
-          content={
+          headerSlot={<Brand />}
+          contentSlot={
             <>
               <SidebarSection
                 as="nav"
                 label="Main"
-                content={[
-                  <SidebarLink key="overview" to="/" label="Overview" icon={<LayoutDashboard />} active={isOverview} />,
+                contentSlot={[
+                  <SidebarLink
+                    key="overview"
+                    to="/"
+                    label="Overview"
+                    iconSlot={<LayoutDashboard />}
+                    active={isOverview}
+                  />,
                 ]}
               />
               <SidebarSection
                 as="nav"
                 title="Hosts"
                 status={
-                  <QueryState
+                  <LoadState
                     compact
                     query={query}
                     what="hosts"
                     count={hosts.length}
-                    empty={<EmptyState compact title="No hosts configured." className="px-2" />}
+                    emptySlot={<EmptyState compact title="No hosts configured." className="px-2" />}
                   />
                 }
-                content={hosts.map((host) => (
+                contentSlot={hosts.map((host) => (
                   <SidebarLink
                     key={host.name}
                     to="/hosts/$hostName"
                     params={{ hostName: host.name }}
                     label={host.name}
-                    icon={hostIcon(host)}
+                    iconSlot={hostIcon(host)}
                     status={host.status === 'ONLINE' ? undefined : { label: HOST_STATUS_LABELS[host.status].label }}
                     active={host.name === hostName}
                   />
@@ -126,15 +132,15 @@ function RootRoute() {
               />
             </>
           }
-          footer={
+          footerSlot={
             <>
-              <SidebarLink to={SETTINGS_PATH} label="Settings" icon={<Settings />} active={isSettings} />
+              <SidebarLink to={SETTINGS_PATH} label="Settings" iconSlot={<Settings />} active={isSettings} />
               <ThemePicker variant="compact" />
             </>
           }
         />
       }
-      content={<Outlet />}
+      contentSlot={<Outlet />}
     />
   );
 }

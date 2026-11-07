@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Card } from "@/components/ui/card";
 import { IconClassContext } from "@/components/ui/icons-base";
-import { cn } from "@/lib/utils";
+import { cn, type SlotNode } from "@/lib/utils";
 
 type StatTileProps = {
   /** What the figure is called: "Turns", "Daily average". Drawn above it, muted. */
@@ -17,7 +17,7 @@ type StatTileProps = {
    */
   hint?: ReactNode | undefined;
   /** Before the label. A bare `<Clock />`; the tile sizes it and mutes it. */
-  icon?: ReactNode | undefined;
+  iconSlot?: SlotNode | undefined;
   /**
    * Whether the figure is still being fetched. On, a bar stands in for the value and the label
    * stays — the tile is as tall as it will be, so a row of them does not jump when the data lands.
@@ -42,14 +42,14 @@ type StatTileProps = {
 const ICON_BOX = cn("shrink-0", "[&_svg]:size-4 [&_svg]:shrink-0");
 
 /** A bar standing in for the figure — `Skeleton`'s look, on both platforms, at one line of it. */
-const BAR = cn("h-8 w-20 rounded-md bg-accent", "animate-pulse");
+const BAR = cn("h-8 w-20 rounded-md bg-foreground/10", "animate-pulse");
 
 /**
  * What a pressable tile adds on the web: a compiled `Pressable` is a `<button>`, which centres its
  * text and draws no focus ring of its own. None of it is a class the device can read.
  */
 const PRESSABLE =
-  "text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "text-left transition-colors hover:bg-hover focus-visible:bg-hover focus-visible:outline-none";
 
 /**
  * A wrapper around a caller's node, not layout of its own: a block box on the web, where a compiled
@@ -57,11 +57,14 @@ const PRESSABLE =
  */
 const SLOT = "block";
 
+/**
+ * One number on a card: a label, the figure and a hint, pressable as a filter when given `onPress`.
+ */
 export function StatTile({
   label,
   value,
   hint,
-  icon,
+  iconSlot,
   loading = false,
   onClick: onPress,
   selected,
@@ -71,17 +74,41 @@ export function StatTile({
   const toggle = onPress !== undefined && selected !== undefined;
   // The pressed state in each platform's spelling. react-native-web forwards `aria-*` and drops
   // `accessibilityState`; the device reads `accessibilityState` and has no `aria-pressed`.
-  const pressed = toggle ? { "aria-pressed": selected } : {};
+  const pressedState = { "aria-pressed": selected };
+  const pressed = toggle ? pressedState : {};
 
-  // The label, hint and icon. A selected tile keeps its card fill and is marked by its border
-  // alone, so this ink is the same whether or not it is chosen.
-  const ink = "text-muted-foreground";
+  // A selected tile is the chosen tint inside an `active` edge, a step further under the pointer
+  // and focused. Its label, hint and icon turn `foreground` there: muted on the tint is under 4.5:1.
+  const chosen = toggle && selected === true;
+  const ink = chosen ? "text-foreground" : "text-foreground/60";
   const classes = cn(
     "min-w-0 gap-1 p-4",
     onPress !== undefined && PRESSABLE,
-    toggle && selected && "border-selection",
+    chosen && "border-active bg-active/40",
+    chosen && "hover:bg-active/60 focus-visible:bg-active/60",
     className,
   );
+
+  const figure =
+    typeof value === "string" || typeof value === "number" ? (
+      <span
+        data-slot="stat-tile-value"
+        className={cn(
+          "cube-rn-text",
+          "font-semibold text-2xl text-foreground tabular-nums",
+          valueClassName,
+        )}
+      >
+        {value}
+      </span>
+    ) : (
+      <div
+        data-slot="stat-tile-value"
+        className={cn("cube-rn-view", SLOT, "min-w-0", valueClassName)}
+      >
+        {value}
+      </div>
+    );
 
   const body = (
     <>
@@ -89,40 +116,26 @@ export function StatTile({
         data-slot="stat-tile-label-row"
         className="cube-rn-view min-w-0 flex-row items-center gap-2"
       >
-        {icon ? (
+        {iconSlot ? (
           <div data-slot="stat-tile-icon" aria-hidden className={cn("cube-rn-view", ICON_BOX, ink)}>
             <IconClassContext.Provider value={cn("size-4 shrink-0", ink)}>
-              {icon}
+              {iconSlot}
             </IconClassContext.Provider>
           </div>
         ) : null}
         <span
           data-slot="stat-tile-label"
-          className={cn("cube-rn-text", "min-w-0 flex-1 truncate font-medium text-sm", ink)}
+          // Normal weight, as PropertyRow's label: the label supports the figure under it, and
+          // a grey semibold label competed with it.
+          className={cn("cube-rn-text", "min-w-0 flex-1 truncate text-sm", ink)}
         >
           {label}
         </span>
       </div>
       {loading ? (
         <div data-slot="stat-tile-skeleton" aria-hidden className={cn("cube-rn-view", BAR)} />
-      ) : typeof value === "string" || typeof value === "number" ? (
-        <span
-          data-slot="stat-tile-value"
-          className={cn(
-            "cube-rn-text",
-            "font-semibold text-2xl text-card-foreground tabular-nums",
-            valueClassName,
-          )}
-        >
-          {value}
-        </span>
       ) : (
-        <div
-          data-slot="stat-tile-value"
-          className={cn("cube-rn-view", SLOT, "min-w-0", valueClassName)}
-        >
-          {value}
-        </div>
+        figure
       )}
       {hint ? (
         <span data-slot="stat-tile-hint" className={cn("cube-rn-text", "text-xs", ink)}>

@@ -3,7 +3,7 @@ import { Badge, type BadgeVariant } from '@/components/ui/badge';
 
 /** How each status reads and which badge it wears. */
 export const HOST_STATUS_LABELS = {
-  ONLINE: { label: 'Online', variant: 'success' },
+  ONLINE: { label: 'Online', variant: 'positive' },
   UNREACHABLE: { label: 'Unreachable', variant: 'destructive' },
   PENDING: { label: 'Waiting', variant: 'secondary' },
 } as const satisfies Record<HostStatus, { label: string; variant: BadgeVariant }>;

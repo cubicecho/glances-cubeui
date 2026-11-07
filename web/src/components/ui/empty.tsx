@@ -11,13 +11,16 @@ type TextProps = Omit<React.ComponentPropsWithoutRef<"span">, "className"> & {
   className?: string | undefined;
 };
 
+/** The root of an empty state: a centred column. */
 const Empty = React.forwardRef<HTMLDivElement, ViewProps>(({ className, ...props }, ref) => (
   <div
     ref={ref as React.Ref<HTMLDivElement>}
     data-slot="empty"
+    // `border-dashed` with no width, as shadcn's Empty: no edge unless a caller adds one. The /10
+    // edge it had was 1.24:1, barely there in light and gone in dark.
     className={cn(
       "cube-rn-view",
-      "w-full min-w-0 items-center justify-center gap-3 rounded-lg border-dashed border-border py-10",
+      "w-full min-w-0 items-center justify-center gap-3 rounded-lg border-dashed py-10",
       className,
     )}
     {...(props as React.ComponentPropsWithoutRef<"div">)}
@@ -25,6 +28,7 @@ const Empty = React.forwardRef<HTMLDivElement, ViewProps>(({ className, ...props
 ));
 Empty.displayName = "Empty";
 
+/** The block holding the media, the title and the description. */
 const EmptyHeader = React.forwardRef<HTMLDivElement, ViewProps>(({ className, ...props }, ref) => (
   <div
     ref={ref as React.Ref<HTMLDivElement>}
@@ -35,12 +39,13 @@ const EmptyHeader = React.forwardRef<HTMLDivElement, ViewProps>(({ className, ..
 ));
 EmptyHeader.displayName = "EmptyHeader";
 
+/** How `EmptyMedia` is drawn: as given, or as an icon in a muted bubble. */
 export type EmptyMediaVariant = "default" | "icon";
 
 /** `icon` is the muted bubble `EmptyState` draws; `default` is a bare box for an avatar or image. */
 const EMPTY_MEDIA = {
   default: "",
-  icon: "rounded-full bg-muted p-3 text-muted-foreground [&_svg:not([class*='size-'])]:size-6",
+  icon: "rounded-full bg-foreground/10 p-3 text-foreground/60 [&_svg:not([class*='size-'])]:size-6",
 } satisfies Record<EmptyMediaVariant, string>;
 
 type EmptyMediaProps = ViewProps & {
@@ -48,6 +53,7 @@ type EmptyMediaProps = ViewProps & {
   variant?: EmptyMediaVariant | null | undefined;
 };
 
+/** The icon or image above the title. */
 const EmptyMedia = React.forwardRef<HTMLDivElement, EmptyMediaProps>(
   ({ className, variant, children, ...props }, ref) => {
     const box = cn(
@@ -63,7 +69,7 @@ const EmptyMedia = React.forwardRef<HTMLDivElement, EmptyMediaProps>(
           className={cn("cube-rn-view", box)}
           {...(props as React.ComponentPropsWithoutRef<"div">)}
         >
-          <IconClassContext.Provider value="h-6 w-6 text-muted-foreground">
+          <IconClassContext.Provider value="h-6 w-6 text-foreground/60">
             {children}
           </IconClassContext.Provider>
         </div>
@@ -83,16 +89,19 @@ const EmptyMedia = React.forwardRef<HTMLDivElement, EmptyMediaProps>(
 );
 EmptyMedia.displayName = "EmptyMedia";
 
+/** What is missing, in a few words. */
 const EmptyTitle = React.forwardRef<HTMLSpanElement, TextProps>(({ className, ...props }, ref) => (
   <span
     ref={ref as React.Ref<HTMLSpanElement>}
     data-slot="empty-title"
-    className={cn("cube-rn-text", "font-medium text-sm text-foreground", className)}
+    // A size over the description's, so the first thing a new user reads leads the block.
+    className={cn("cube-rn-text", "font-semibold text-base text-foreground", className)}
     {...(props as React.ComponentPropsWithoutRef<"span">)}
   />
 ));
 EmptyTitle.displayName = "EmptyTitle";
 
+/** The muted line under the title, saying what to do about it. */
 const EmptyDescription = React.forwardRef<HTMLSpanElement, TextProps>(
   ({ className, ...props }, ref) => (
     <span
@@ -100,7 +109,7 @@ const EmptyDescription = React.forwardRef<HTMLSpanElement, TextProps>(
       data-slot="empty-description"
       className={cn(
         "cube-rn-text",
-        "text-center text-sm text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+        "text-center text-sm text-foreground/60 [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-info",
         className,
       )}
       {...(props as React.ComponentPropsWithoutRef<"span">)}

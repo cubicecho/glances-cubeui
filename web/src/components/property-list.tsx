@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn, type SlotNode } from "@/lib/utils";
 
 type Layout = "inline" | "stacked";
 
@@ -55,12 +55,12 @@ function asText(node: ReactNode, className: string) {
   );
 }
 
-type DescriptionListProps = {
+type PropertyListProps = {
   /**
    * The rows: `PropertyRow`s, as an array or a fragment. Nothing else belongs here — on the web
    * this is a `<dl>`, which may hold only term-and-description groups.
    */
-  content?: ReactNode | undefined;
+  contentSlot?: SlotNode | undefined;
   /**
    * `inline` (the default) puts each label beside its value, and falls back to `stacked` on its own
    * when the list is too narrow for both. `stacked` puts the label above the value at every width.
@@ -83,13 +83,13 @@ type DescriptionListProps = {
  * - On device it is `role="list"` and each row `role="listitem"`, so VoiceOver and TalkBack say
  *   how many facts there are and read each label with its value.
  *
- * No state, no data, no `children` — the rows are `content`, like every other shell's body.
+ * No state, no data, no `children` — the rows are `contentSlot`, like every other shell's body.
  */
-export function DescriptionList({ content, layout = "inline", className }: DescriptionListProps) {
+export function PropertyList({ contentSlot, layout = "inline", className }: PropertyListProps) {
   return (
     <LayoutContext.Provider value={layout}>
-      <dl data-slot="description-list" className={cn("cube-rn-view", "min-w-0 gap-3", className)}>
-        {content}
+      <dl data-slot="property-list" className={cn("cube-rn-view", "min-w-0 gap-3", className)}>
+        {contentSlot}
       </dl>
     </LayoutContext.Provider>
   );
@@ -114,7 +114,7 @@ type PropertyRowProps = {
    * `<dl>`'s rows may hold nothing but terms and descriptions — and an action on the value is part
    * of what is said about it.
    */
-  action?: ReactNode | undefined;
+  actionSlot?: SlotNode | undefined;
   className?: string | undefined;
   labelClassName?: string | undefined;
   /**
@@ -131,9 +131,9 @@ type PropertyRowProps = {
 };
 
 /**
- * One fact in a `DescriptionList`: a label, a value, a hint under the value, an action beside it.
+ * One fact in a `PropertyList`: a label, a value, a hint under the value, an action beside it.
  *
- * Only ever inside a `DescriptionList`, which is what gives it a layout and a parent list — a
+ * Only ever inside a `PropertyList`, which is what gives it a layout and a parent list — a
  * `<dt>` with no `<dl>` around it is markup axe rejects, as is a list item with no list.
  *
  * The row is a `<div>` on the web, not an `<li>`: `webAs` names the element, and `role="listitem"`
@@ -143,7 +143,7 @@ export function PropertyRow({
   label,
   value,
   hint,
-  action,
+  actionSlot,
   className,
   labelClassName,
   valueClassName,
@@ -159,7 +159,7 @@ export function PropertyRow({
         data-slot="property-row-label"
         className={cn(
           "cube-rn-text",
-          "break-words text-muted-foreground text-sm",
+          "break-words text-foreground/60 text-sm",
           LABELS[layout],
           labelClassName,
         )}
@@ -180,23 +180,23 @@ export function PropertyRow({
         <div className="cube-rn-view min-w-0 flex-1 gap-0.5">
           {asText(value, cn("break-words text-foreground text-sm", valueClassName))}
           {hint ? (
-            <span
-              data-slot="property-row-hint"
-              className="cube-rn-text text-muted-foreground text-xs"
-            >
+            <span data-slot="property-row-hint" className="cube-rn-text text-foreground/60 text-xs">
               {hint}
             </span>
           ) : null}
         </div>
-        {action ? (
+        {actionSlot ? (
           <div
             data-slot="property-row-action"
             className="cube-rn-view shrink-0 flex-row items-center gap-1"
           >
-            {action}
+            {actionSlot}
           </div>
         ) : null}
       </dd>
     </div>
   );
 }
+
+/** @deprecated Use `PropertyList`; this name goes in the next release. */
+export const DescriptionList = PropertyList;

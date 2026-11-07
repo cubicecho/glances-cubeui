@@ -1,6 +1,6 @@
-import { createLink } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { CardLayout } from '@/components/card-layout';
-import { EmptyState } from '@/components/page';
+import { EmptyState } from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
 import { Server } from '@/core/app-icons';
 import { formatPercent } from '@/core/format';
@@ -9,7 +9,6 @@ import type { Host } from '@/hosts/use-live-hosts';
 import { ReadingRings } from '@/readings/reading-rings';
 import { UsageChart, usageSeries } from '@/readings/usage-chart';
 
-const ButtonLink = createLink(Button);
 /**
  * One host on the overview: its status, a ring per headline figure (GPUs included) and the trend of the same shares.
  *
@@ -22,12 +21,12 @@ export function HostCard({ host }: { host: Host }) {
     <CardLayout
       title={host.name}
       level={2}
-      icon={<Server />}
+      iconSlot={<Server />}
       description={
         host.error ?? reading?.system.description ?? reading?.system.osName ?? 'Waiting for the first reading.'
       }
-      action={<HostStatusBadge status={host.status} />}
-      content={
+      actionSlot={<HostStatusBadge status={host.status} />}
+      contentSlot={
         reading === null
           ? []
           : [
@@ -43,11 +42,14 @@ export function HostCard({ host }: { host: Host }) {
               />,
             ]
       }
-      empty={<EmptyState compact title="No reading from this host yet." />}
-      footerActions={
-        <ButtonLink to="/hosts/$hostName" params={{ hostName: host.name }} variant="outline" size="sm">
-          {`Open ${host.name}`}
-        </ButtonLink>
+      emptySlot={<EmptyState compact title="No reading from this host yet." />}
+      footerActionsSlot={
+        <Button
+          variant="outline"
+          size="sm"
+          linkSlot={<Link to="/hosts/$hostName" params={{ hostName: host.name }} />}
+          content={`Open ${host.name}`}
+        />
       }
     />
   );

@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { CircleAlert } from "@/components/ui/icons";
+import type { SlotNode } from "@/lib/utils";
 
-type RouteErrorProps = {
+type ErrorPageProps = {
   error: unknown;
   reset: () => void;
   /**
@@ -21,11 +22,13 @@ type RouteErrorProps = {
    * into a bug report. `true` shows `error.message`; a node replaces the block's
    * contents. Left out when it would say exactly what `describe` already said.
    * Selectable on device too (`selectable`), where text is not by default. The
-   * block is bordered rather than filled: muted text on `bg-muted` fails contrast.
+   * block is bordered rather than filled: muted text on `bg-foreground/10` fails contrast.
    */
   details?: ReactNode | boolean;
   /** More buttons beside "Try again" — a reload is the usual one. */
-  actions?: ReactNode;
+  actionSlot?: SlotNode;
+  /** @deprecated Use `actionSlot`; this name goes in the next release. `actionSlot` wins. */
+  actionsSlot?: SlotNode;
 };
 
 function friendlyMessage(error: unknown): string {
@@ -47,19 +50,29 @@ function friendlyMessage(error: unknown): string {
 
 /** What `details={true}` shows: the message as thrown, for whoever files the bug. */
 function rawMessage(error: unknown): string | undefined {
-  if (error instanceof Error) return error.message || undefined;
-  if (typeof error === "string") return error || undefined;
+  if (error instanceof Error) {
+    return error.message || undefined;
+  }
+  if (typeof error === "string") {
+    return error || undefined;
+  }
   return undefined;
 }
 
-export function RouteError({
+/**
+ * The whole-screen message shown when the tree below a route has thrown. `actionsSlot` is the old
+ * name of `actionSlot`, kept for one release; the new name wins when both are passed.
+ */
+export function ErrorPage({
   error,
   reset,
   describe = friendlyMessage,
   title = "Something went wrong",
   details,
-  actions,
-}: RouteErrorProps) {
+  actionSlot,
+  actionsSlot,
+}: ErrorPageProps) {
+  const actions = actionSlot ?? actionsSlot;
   const summary = describe(error);
   const detail = details === true ? rawMessage(error) : details || undefined;
   // A plain `Error` is described by its own message, so the default block would print it twice.
@@ -68,38 +81,39 @@ export function RouteError({
   return (
     <div
       role="alert"
-      data-slot="route-error"
+      data-slot="error-page"
       className="cube-rn-view flex-1 items-center justify-center gap-4 px-8 py-20"
     >
-      <div className="cube-rn-view rounded-full bg-destructive/10 p-4">
-        <CircleAlert className="h-7 w-7 text-destructive" />
+      <div className="cube-rn-view rounded-full bg-negative/10 p-4">
+        <CircleAlert className="h-7 w-7 text-negative" />
       </div>
-      <div className="cube-rn-view max-w-sm items-center">
-        <span data-slot="route-error-title" className="cube-rn-text font-semibold text-foreground">
+      {/* One width for the text and the details under it, not two centred columns. The title is
+          the screen's heading: `role`/`aria-level` because an `<h1>` has no native counterpart. */}
+      <div className="cube-rn-view max-w-md items-center">
+        <h1 data-slot="error-page-title" className="cube-rn-text font-semibold text-foreground">
           {title}
-        </span>
-        <span className="cube-rn-text mt-1 text-center text-sm text-muted-foreground">
-          {summary}
-        </span>
+        </h1>
+        <span className="cube-rn-text mt-1 text-center text-sm text-foreground/60">{summary}</span>
       </div>
       {shown ? (
         <div
-          data-slot="route-error-details"
-          className="cube-rn-view w-full max-w-md rounded-md border border-border px-3 py-2"
+          data-slot="error-page-details"
+          className="cube-rn-view w-full max-w-md rounded-md border border-foreground/10 px-3 py-2"
         >
           {typeof shown === "string" ? (
-            <span className="cube-rn-text font-mono text-xs text-muted-foreground">{shown}</span>
+            <span className="cube-rn-text font-mono text-xs text-foreground/60">{shown}</span>
           ) : (
             shown
           )}
         </div>
       ) : null}
       <div className="cube-rn-view flex-row flex-wrap items-center justify-center gap-2">
-        <Button variant="outline" size="sm" onClick={reset}>
-          Try again
-        </Button>
+        <Button variant="outline" size="sm" onClick={reset} content="Try again" />
         {actions}
       </div>
     </div>
   );
 }
+
+/** @deprecated Use `ErrorPage`; this name goes in the next release. */
+export const RouteError = ErrorPage;
