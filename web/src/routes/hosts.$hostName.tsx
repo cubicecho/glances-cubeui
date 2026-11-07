@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useState } from 'react';
+import { CardLayout } from '@/components/card-layout';
 import { DescriptionList, PropertyRow } from '@/components/description-list';
 import { EmptyState } from '@/components/page';
 import { PageLayout } from '@/components/page-layout';
 import { QueryState } from '@/components/query-state';
-import { Section } from '@/components/section';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { ServerOff } from '@/core/app-icons';
@@ -132,20 +132,20 @@ function HostReadings({ host }: { host: Host }) {
           }
         />
       ) : null}
-      <Section
-        surface="card"
+      <CardLayout
+        level={2}
         title="Now"
         description={reading ? describeRunning(reading) : undefined}
-        content={
+        contentSlot={
           reading ? <ReadingRings reading={reading} /> : <EmptyState compact title="No reading from this host yet." />
         }
       />
       <div className="grid gap-6 xl:grid-cols-2">
-        <Section
-          surface="card"
+        <CardLayout
+          level={2}
           title="Usage"
           description="Share in use over the kept history."
-          content={
+          contentSlot={
             <UsageChart
               samples={history}
               percent
@@ -155,11 +155,11 @@ function HostReadings({ host }: { host: Host }) {
             />
           }
         />
-        <Section
-          surface="card"
+        <CardLayout
+          level={2}
           title="Network"
           description="Physical interfaces together."
-          content={
+          contentSlot={
             <UsageChart
               samples={history}
               label="Network traffic over time"
@@ -172,12 +172,12 @@ function HostReadings({ host }: { host: Host }) {
       {reading ? (
         <>
           {reading.gpus.length > 0 ? (
-            <Section surface="card" title="GPU" content={<GpuTable gpus={reading.gpus} />} />
+            <CardLayout level={2} title="GPU" contentSlot={<GpuTable gpus={reading.gpus} />} />
           ) : null}
-          <Section
-            surface="card"
+          <CardLayout
+            level={2}
             title="Filesystems"
-            action={
+            actionSlot={
               <ShowAllButton
                 shownCount={reading.filesystems.length}
                 count={reading.filesystemCount}
@@ -185,17 +185,17 @@ function HostReadings({ host }: { host: Host }) {
                 onChange={setShowsAllFilesystems}
               />
             }
-            content={
+            contentSlot={
               <FilesystemTable filesystems={(showsAllFilesystems && everything?.filesystems) || reading.filesystems} />
             }
           />
-          <Section surface="card" title="Top processes" content={<ProcessTable processes={reading.processes} />} />
-          <Section surface="card" title="Containers" content={<ContainerTable containers={reading.containers} />} />
+          <CardLayout level={2} title="Top processes" contentSlot={<ProcessTable processes={reading.processes} />} />
+          <CardLayout level={2} title="Containers" contentSlot={<ContainerTable containers={reading.containers} />} />
           <div className="grid gap-6 xl:grid-cols-2">
-            <Section
-              surface="card"
+            <CardLayout
+              level={2}
               title="Network interfaces"
-              action={
+              actionSlot={
                 <ShowAllButton
                   shownCount={reading.networkInterfaces.length}
                   count={reading.networkInterfaceCount}
@@ -203,18 +203,18 @@ function HostReadings({ host }: { host: Host }) {
                   onChange={setShowsAllInterfaces}
                 />
               }
-              content={
+              contentSlot={
                 <NetworkTable
                   interfaces={(showsAllInterfaces && everything?.networkInterfaces) || reading.networkInterfaces}
                 />
               }
             />
-            <Section surface="card" title="Sensors" content={<SensorTable sensors={reading.sensors} />} />
+            <CardLayout level={2} title="Sensors" contentSlot={<SensorTable sensors={reading.sensors} />} />
           </div>
-          <Section
-            surface="card"
+          <CardLayout
+            level={2}
             title="System"
-            content={
+            contentSlot={
               <DescriptionList
                 content={[
                   <PropertyRow key="hostname" label="Hostname" value={reading.system.hostname} />,

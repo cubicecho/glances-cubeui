@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
+import { CardLayout } from '@/components/card-layout';
 import { PageLayout } from '@/components/page-layout';
-import { Section } from '@/components/section';
 import { SettingRow } from '@/components/setting-row';
 import { ThemePicker } from '@/components/ui/theme-picker';
 import { useSampleIntervalSeconds } from '@/hosts/use-live-hosts';
@@ -100,11 +100,11 @@ function SettingsRoute() {
       description="Kept in this browser only. Another browser or device keeps its own."
       content={
         <div className="flex flex-col gap-6 py-4">
-          <Section surface="card" title="Updates" content={<UpdateIntervalSetting />} />
-          <Section
-            surface="card"
+          <CardLayout level={2} title="Updates" contentSlot={<UpdateIntervalSetting />} />
+          <CardLayout
+            level={2}
             title="Units"
-            content={
+            contentSlot={
               <div className={ROWS}>
                 <ChoiceSetting
                   title="Byte units"
@@ -123,10 +123,10 @@ function SettingsRoute() {
               </div>
             }
           />
-          <Section
-            surface="card"
+          <CardLayout
+            level={2}
             title="Host pages"
-            content={
+            contentSlot={
               <div className={ROWS}>
                 <ChoiceSetting
                   title="Detail"
@@ -152,10 +152,10 @@ function SettingsRoute() {
               </div>
             }
           />
-          <Section
-            surface="card"
+          <CardLayout
+            level={2}
             title="Appearance"
-            content={
+            contentSlot={
               <div className={ROWS}>
                 <SettingRow
                   title="Theme"
