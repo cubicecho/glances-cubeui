@@ -7,7 +7,6 @@ import { PageLayout } from '@/components/page-layout';
 import { PropertyList, PropertyRow } from '@/components/property-list';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { ServerOff } from '@/core/app-icons';
 import { formatBytes, formatPercent, formatRate, formatTime } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
 import { type Host, useHostEverything, useHosts } from '@/hosts/use-live-hosts';
@@ -45,15 +44,11 @@ function HostRoute() {
           <LoadState
             query={query}
             what="this host"
-            count={host ? 1 : 0}
-            emptySlot={
-              <EmptyState
-                icon={ServerOff}
-                level={2}
-                title={`No host named ${hostName}`}
-                description="It is not in GLANCES_HOSTS on this server."
-              />
-            }
+            record={host}
+            notFoundLabel={`No host named ${hostName}`}
+            description="It is not in GLANCES_HOSTS on this server."
+            actionSlot={<Button variant="outline" content="Back to the overview" linkSlot={<Link to="/" />} />}
+            level={2}
           />
           {host ? <HostReadings host={host} /> : null}
         </div>

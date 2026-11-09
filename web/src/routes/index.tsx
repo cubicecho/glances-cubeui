@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { EmptyState } from '@/components/empty-state';
 import { LoadState } from '@/components/load-state';
 import { PageLayout } from '@/components/page-layout';
-import { Server } from '@/core/app-icons';
+import { Server } from '@/components/ui/icons';
 import { HostCard } from '@/hosts/host-card';
 import { useHosts } from '@/hosts/use-live-hosts';
 
@@ -27,7 +27,7 @@ function OverviewRoute() {
             count={hosts.length}
             emptySlot={
               <EmptyState
-                icon={Server}
+                iconSlot={<Server />}
                 title="No hosts configured"
                 description="Set GLANCES_HOSTS, for example nas=http://nas:61208, and restart the server."
               />
