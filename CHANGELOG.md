@@ -1,3 +1,10 @@
+## [1.4.1](https://github.com/cubicecho/glances-cubeui/compare/v1.4.0...v1.4.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* **cubeui:** reinstall radio-group for the 40px strip, and drop the touchTarget workaround ([07f369c](https://github.com/cubicecho/glances-cubeui/commit/07f369cae60985f788c142e373188ff9e6ed39b7)), closes [cubeui#540](https://github.com/cubeui/issues/540) [cubeui#541](https://github.com/cubeui/issues/541)
+
 # [1.4.0](https://github.com/cubicecho/glances-cubeui/compare/v1.3.1...v1.4.0) (2026-10-07)
 
 
