@@ -2,7 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { CardLayout } from '@/components/card-layout';
 import { EmptyState } from '@/components/empty-state';
 import { Button } from '@/components/ui/button';
-import { Server } from '@/core/app-icons';
+import { Server } from '@/components/ui/icons';
 import { formatPercent } from '@/core/format';
 import { HostStatusBadge } from '@/hosts/host-status-badge';
 import type { Host } from '@/hosts/use-live-hosts';
